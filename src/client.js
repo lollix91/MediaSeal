@@ -78,8 +78,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             const signature = await connection.sendRawTransaction(serializedTransaction);
 
             await connection.confirmTransaction(signature);
-            console.log(`New account created with public key: ${newAccount.publicKey.toBase58()}`);
-            publicKeyDisplay.textContent = `New Account Public Key: ${newAccount.publicKey.toBase58()}`;
+            console.log(`New account created. Write this key in a safe place, you will need it to check media checksums in the future. Public key: ${newAccount.publicKey.toBase58()}`);
+            publicKeyDisplay.innerHTML = `New account created. Write this key in a safe place, you will need it to check media checksums in the future. Public key:<br><p style="color:red;">${newAccount.publicKey.toBase58()}</p>`;
 
             uploadChecksumButton.disabled = false;
             showStatus("Account created successfully!");
@@ -91,6 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function uploadChecksum(checksum, mediaType) {
+		uploadChecksumButton.disabled = true;
         let checksumBytes;
         if (typeof checksum === 'string') {
             if (checksum.length !== 64) {
