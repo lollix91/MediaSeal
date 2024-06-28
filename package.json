@@ -1,0 +1,13 @@
+{
+  "name": "solana-phantom-wallet-integration",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "start": "parcel src/index.html"
+  },
+  "dependencies": {
+    "@solana/web3.js": "^1.30.2",
+    "parcel": "^2.5.0"
+  },
+  "devDependencies": {}
+}
