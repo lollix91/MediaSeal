@@ -7,13 +7,16 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Checksum Uploader</h1>
-        <p>Upload and verify checksums to avoid video and photo counterfeit. Ensure your media is authentic and trusted.</p>
-        <button id="connectWallet" class="button">Connect Wallet</button>
-        <button id="createAccount" class="button" disabled>Create Account</button>
-        <button id="uploadChecksum" class="button" disabled>Upload Checksum</button>
+    <div class="top-right-buttons">
         <button id="publicVerifyChecksum" class="button">Verify Checksum</button>
+    </div>
+    <div class="container">
+        <div class="center-buttons">
+            <button id="connectWallet" class="button">Connect Wallet</button>
+            <button id="createAccount" class="button" disabled>Create Account</button>
+            <button id="uploadChecksum" class="button" disabled>Upload Checksum</button>
+        </div>
+        <div id="publicKeyDisplay" class="public-key-display"></div>
     </div>
     <script src="client.js" type="module"></script>
 </body>

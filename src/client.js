@@ -28,6 +28,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const createAccountButton = document.getElementById("createAccount");
     const uploadChecksumButton = document.getElementById("uploadChecksum");
     const publicVerifyChecksumButton = document.getElementById("publicVerifyChecksum");
+    const publicKeyDisplay = document.getElementById("publicKeyDisplay");
 
     let provider = null;
     let connection = new Connection("https://api.testnet.solana.com", 'confirmed');
@@ -54,6 +55,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             payer = provider.publicKey;
             console.log("Connected with public key:", payer.toString());
 
+            connectWalletButton.disabled = true;
             createAccountButton.disabled = false;
         } catch (err) {
             console.error("Failed to connect to Phantom wallet", err);
@@ -86,6 +88,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             await connection.confirmTransaction(signature);
             console.log(`New account created with public key: ${newAccount.publicKey.toBase58()}`);
+            publicKeyDisplay.textContent = `New Account Public Key: ${newAccount.publicKey.toBase58()}`;
+
+            createAccountButton.disabled = true;
             uploadChecksumButton.disabled = false;
         } catch (err) {
             console.error("Failed to create account", err);
@@ -128,14 +133,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             transaction.recentBlockhash = blockhash;
             transaction.feePayer = payer;
 
+            uploadChecksumButton.disabled = true;
             const signedTransaction = await provider.signTransaction(transaction);
             const serializedTransaction = signedTransaction.serialize();
             const signature = await connection.sendRawTransaction(serializedTransaction);
 
             await connection.confirmTransaction(signature);
             console.log("Checksum uploaded successfully");
+            uploadChecksumButton.disabled = false;
         } catch (err) {
             console.error("Failed to upload checksum", err);
+            uploadChecksumButton.disabled = false;
         }
     }
 

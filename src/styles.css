@@ -3,11 +3,11 @@ body {
     color: #fff;
     font-family: Arial, sans-serif;
     display: flex;
-    flex-direction: column;
-    align-items: center;
     justify-content: center;
+    align-items: center;
     min-height: 100vh;
     margin: 0;
+    position: relative;
 }
 
 .container {
@@ -19,14 +19,17 @@ body {
     box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
 }
 
-h1 {
-    font-size: 2.5em;
-    margin-bottom: 0.5em;
+.center-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
 }
 
-p {
-    font-size: 1.2em;
-    margin-bottom: 1.5em;
+.top-right-buttons {
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
 .button {
@@ -51,4 +54,10 @@ p {
 
 .button:hover:not(:disabled) {
     background-color: #17a744;
+}
+
+.public-key-display {
+    margin-top: 20px;
+    font-size: 1em;
+    word-break: break-all;
 }
