@@ -56,7 +56,7 @@ body {
     background-color: #17a744;
 }
 
-.public-key-display {
+.public-key-display, .status-message {
     margin-top: 20px;
     font-size: 1em;
     word-break: break-all;

@@ -29,12 +29,18 @@ document.addEventListener("DOMContentLoaded", async () => {
     const uploadChecksumButton = document.getElementById("uploadChecksum");
     const publicVerifyChecksumButton = document.getElementById("publicVerifyChecksum");
     const publicKeyDisplay = document.getElementById("publicKeyDisplay");
+    const statusMessage = document.getElementById("statusMessage");
 
     let provider = null;
     let connection = new Connection("https://api.testnet.solana.com", 'confirmed');
     let programId = new PublicKey("BDoTMxmU7DBHT8Q75nZdqJ228ZhDdWnQjsyvLtRy9VRx");
     let payer = null;
     let newAccount = Keypair.generate();
+
+    function showStatus(message, isError = false) {
+        statusMessage.textContent = message;
+        statusMessage.style.color = isError ? 'red' : 'green';
+    }
 
     function getProvider() {
         if ("solana" in window) {
@@ -46,23 +52,8 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.open("https://phantom.app/", "_blank");
     }
 
-    connectWalletButton.onclick = async () => {
-        provider = getProvider();
-        if (!provider) return;
-
-        try {
-            await provider.connect();
-            payer = provider.publicKey;
-            console.log("Connected with public key:", payer.toString());
-
-            connectWalletButton.disabled = true;
-            createAccountButton.disabled = false;
-        } catch (err) {
-            console.error("Failed to connect to Phantom wallet", err);
-        }
-    };
-
     async function createAccount() {
+        createAccountButton.disabled = true;
         const lamports = await connection.getMinimumBalanceForRentExemption(34);
 
         const transaction = new Transaction().add(
@@ -90,10 +81,12 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log(`New account created with public key: ${newAccount.publicKey.toBase58()}`);
             publicKeyDisplay.textContent = `New Account Public Key: ${newAccount.publicKey.toBase58()}`;
 
-            createAccountButton.disabled = true;
             uploadChecksumButton.disabled = false;
+            showStatus("Account created successfully!");
         } catch (err) {
             console.error("Failed to create account", err);
+            showStatus("Failed to create account", true);
+            createAccountButton.disabled = false;
         }
     }
 
@@ -140,9 +133,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             await connection.confirmTransaction(signature);
             console.log("Checksum uploaded successfully");
+            showStatus("Checksum uploaded successfully!");
             uploadChecksumButton.disabled = false;
         } catch (err) {
             console.error("Failed to upload checksum", err);
+            showStatus("Failed to upload checksum", true);
             uploadChecksumButton.disabled = false;
         }
     }
@@ -164,6 +159,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const accountInfo = await connection.getAccountInfo(new PublicKey(accountPubkey));
             if (accountInfo === null) {
                 console.log("Account not found");
+                showStatus("Account not found", true);
                 return;
             }
 
@@ -176,6 +172,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const signatures = await connection.getSignaturesForAddress(new PublicKey(accountPubkey));
                 if (signatures.length === 0) {
                     console.log("No transactions found for this account");
+                    showStatus("No transactions found for this account", true);
                     return;
                 }
 
@@ -186,11 +183,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 console.log(`Media Type: ${media.mediaType}`);
                 console.log(`Checksum Found: ${Buffer.from(media.checksum).toString('hex')}`);
                 console.log(`Transaction Date and Time: ${transactionDateTime}`);
+                showStatus("Checksum verification successful!");
             } else {
                 console.log("Checksum verification failed");
+                showStatus("Checksum verification failed", true);
             }
         } catch (err) {
             console.error("Failed to verify checksum", err);
+            showStatus("Failed to verify checksum", true);
         }
     }
 
@@ -202,6 +202,23 @@ document.addEventListener("DOMContentLoaded", async () => {
         return true;
     }
 
+    connectWalletButton.onclick = async () => {
+        provider = getProvider();
+        if (!provider) return;
+
+        try {
+            await provider.connect();
+            payer = provider.publicKey;
+            console.log("Connected with public key:", payer.toString());
+
+            connectWalletButton.disabled = true;
+            createAccountButton.disabled = false;
+            showStatus("Wallet connected successfully!");
+        } catch (err) {
+            console.error("Failed to connect to Phantom wallet", err);
+            showStatus("Failed to connect to Phantom wallet", true);
+        }
+    };
     createAccountButton.onclick = createAccount;
     uploadChecksumButton.onclick = async () => {
         const checksum = "8a9f17b09aa5c3baa1bba66ffa0ad3c5e56ecebefac0b14e0b5abffa8b473ef5";
