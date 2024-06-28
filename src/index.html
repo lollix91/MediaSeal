@@ -2,14 +2,19 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Solana Phantom Wallet Integration</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checksum Uploader</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <h1>Solana Phantom Wallet Integration</h1>
-    <button id="connectWallet">Connect Wallet</button>
-    <button id="createAccount" disabled>Create Account</button>
-    <button id="uploadChecksum" disabled>Upload Checksum</button>
-	<button id="publicVerifyChecksum" disabled>Verify Checksum</button>
-    <script type="module" src="./client.js"></script>
+    <div class="container">
+        <h1>Checksum Uploader</h1>
+        <p>Upload and verify checksums to avoid video and photo counterfeit. Ensure your media is authentic and trusted.</p>
+        <button id="connectWallet" class="button">Connect Wallet</button>
+        <button id="createAccount" class="button" disabled>Create Account</button>
+        <button id="uploadChecksum" class="button" disabled>Upload Checksum</button>
+        <button id="publicVerifyChecksum" class="button">Verify Checksum</button>
+    </div>
+    <script src="client.js" type="module"></script>
 </body>
 </html>
