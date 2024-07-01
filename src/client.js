@@ -206,61 +206,68 @@ document.addEventListener("DOMContentLoaded", async () => {
         hideLoader();
     }
 
-    async function publicVerifyChecksum(accountPubkey, checksum, mediaType) {
-        showLoader();
-        let checksumBytes;
-        if (typeof checksum === 'string') {
-            if (checksum.length !== 64) {
-                throw new Error("Checksum string length must be 64 characters");
-            }
-            checksumBytes = new Uint8Array(checksum.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-        } else if (checksum.length === 32) {
-            checksumBytes = checksum;
-        } else {
-            throw new Error("Checksum must be a 32-byte array or a 64-character hex string");
+async function publicVerifyChecksum(accountPubkey, checksum, mediaType) {
+    showLoader();
+    let checksumBytes;
+    if (typeof checksum === 'string') {
+        if (checksum.length !== 64) {
+            throw new Error("Checksum string length must be 64 characters");
+        }
+        checksumBytes = new Uint8Array(checksum.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+    } else if (checksum.length === 32) {
+        checksumBytes = checksum;
+    } else {
+        throw new Error("Checksum must be a 32-byte array or a 64-character hex string");
+    }
+
+    try {
+        const accountInfo = await connection.getAccountInfo(new PublicKey(accountPubkey));
+        if (accountInfo === null) {
+            console.log("Account not found");
+            showVerifyResult("Account not found", true);
+            hideLoader();
+            return;
         }
 
-        try {
-            const accountInfo = await connection.getAccountInfo(new PublicKey(accountPubkey));
-            if (accountInfo === null) {
-                console.log("Account not found");
-                showVerifyResult("Account not found", true);
+        const media = Media.unpack(accountInfo.data);
+        const isChecksumMatch = media.isInitialized && compareChecksums(media.checksum, checksumBytes) && media.mediaType === mediaType;
+
+        if (isChecksumMatch) {
+            console.log("Checksum verification successful");
+
+            const signatures = await connection.getSignaturesForAddress(new PublicKey(accountPubkey));
+            if (signatures.length === 0) {
+                console.log("No transactions found for this account");
+                showVerifyResult("No transactions found for this account", true);
                 hideLoader();
                 return;
             }
 
-            const media = Media.unpack(accountInfo.data);
-            const isChecksumMatch = media.isInitialized && compareChecksums(media.checksum, checksumBytes) && media.mediaType === mediaType;
+            const recentSignature = signatures[0].signature;
+            const transactionDetails = await connection.getConfirmedTransaction(recentSignature);
+            const transactionDateTime = new Date(transactionDetails.blockTime * 1000);
 
-            if (isChecksumMatch) {
-                console.log("Checksum verification successful");
-
-                const signatures = await connection.getSignaturesForAddress(new PublicKey(accountPubkey));
-                if (signatures.length === 0) {
-                    console.log("No transactions found for this account");
-                    showVerifyResult("No transactions found for this account", true);
-                    hideLoader();
-                    return;
-                }
-
-                const recentSignature = signatures[0].signature;
-                const transactionDetails = await connection.getConfirmedTransaction(recentSignature);
-                const transactionDateTime = new Date(transactionDetails.blockTime * 1000);
-
-                console.log(`Media Type: ${media.mediaType}`);
-                console.log(`Checksum Found: ${Buffer.from(media.checksum).toString('hex')}`);
-                console.log(`Transaction Date and Time: ${transactionDateTime}`);
-                showVerifyResult("Checksum verification successful!");
-            } else {
-                console.log("Checksum verification failed");
-                showVerifyResult("Checksum verification failed", true);
-            }
-        } catch (err) {
-            console.error("Failed to verify checksum", err);
-            showVerifyResult("Failed to verify checksum", true);
+            console.log(`Media Type: ${media.mediaType}`);
+            console.log(`Checksum Found: ${Buffer.from(media.checksum).toString('hex')}`);
+            console.log(`Transaction Date and Time: ${transactionDateTime}`);
+            showVerifyResult(
+                "Checksum verification successful!",
+                false,
+                media.mediaType,
+                Buffer.from(media.checksum).toString('hex'),
+                transactionDateTime
+            );
+        } else {
+            console.log("Checksum verification failed");
+            showVerifyResult("Checksum verification failed", true);
         }
-        hideLoader();
+    } catch (err) {
+        console.error("Failed to verify checksum", err);
+        showVerifyResult("Failed to verify checksum", true);
     }
+    hideLoader();
+}
+
 
     function compareChecksums(storedChecksum, providedChecksum) {
         if (storedChecksum.length !== providedChecksum.length) return false;
@@ -439,10 +446,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         mediaInputArea.style.display = 'none';
     }
 
-    function showVerifyResult(message, isError = false) {
-        verifyResult.textContent = message;
-        verifyResult.style.color = isError ? 'red' : 'green';
+function showVerifyResult(message, isError = false, mediaType = null, checksum = null, transactionDateTime = null) {
+    verifyResult.innerHTML = `<p>${message}</p>`;
+    verifyResult.style.color = isError ? 'red' : 'green';
+    if (!isError && mediaType !== null && checksum !== null && transactionDateTime !== null) {
+        verifyResult.innerHTML += `
+            <p>Media Type: ${mediaType === 1 ? 'Image' : 'Video'}</p>
+            <p>Checksum Found: ${checksum}</p>
+            <p>Transaction Date and Time: ${transactionDateTime}</p>
+        `;
     }
+}
 
     function getMediaType(file) {
         return file.type.startsWith('image/') ? 1 : 0; // 1 for image, 0 for video
