@@ -291,3 +291,7 @@ body {
 #mediaDropArea label.button:hover {
     background-color: var(--button-hover);
 }
+
+#verifyLoader {
+    margin: 20px auto;
+}

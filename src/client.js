@@ -208,7 +208,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function publicVerifyChecksum(accountPubkey, checksum, mediaType) {
-        showLoader();
+		showVerifyLoader();
+		disableVerifyButtons();
         let checksumBytes;
         if (typeof checksum === 'string') {
             if (checksum.length !== 64) {
@@ -266,7 +267,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error("Failed to verify checksum", err);
             showVerifyResult("Failed to verify checksum", true);
         }
-        hideLoader();
+        hideVerifyLoader();
+		enableVerifyButtons();
     }
 
     function compareChecksums(storedChecksum, providedChecksum) {
@@ -470,4 +472,27 @@ document.addEventListener("DOMContentLoaded", async () => {
     function getMediaType(file) {
         return file.type.startsWith('image/') ? 1 : 0; // 1 for image, 0 for video
     }
+	
+	
+	
+function showVerifyLoader() {
+    document.getElementById('verifyLoader').style.display = 'block';
+}
+
+function hideVerifyLoader() {
+    document.getElementById('verifyLoader').style.display = 'none';
+}
+
+function disableVerifyButtons() {
+    verifyChecksumButton.disabled = true;
+    verifyMediaButton.disabled = true;
+}
+
+function enableVerifyButtons() {
+    verifyChecksumButton.disabled = false;
+    verifyMediaButton.disabled = false;
+}	
+	
+	
+	
 });
