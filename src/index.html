@@ -5,39 +5,60 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Media Real Validator</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
 <body>
+    <div class="theme-toggle">
+        <input type="checkbox" id="darkModeToggle">
+        <label for="darkModeToggle">🌓</label>
+    </div>
     <div class="top-right-buttons">
-        <button id="publicVerifyChecksum" class="button">Verify Checksum</button>
+        <button id="publicVerifyChecksum" class="button"><i class="fas fa-check-circle"></i> Verify Checksum</button>
     </div>
     <div class="container">
-        <h1>Media Real Validator</h1>
+        <h1><i class="fas fa-shield-alt"></i> Media Real Validator</h1>
         <p>Welcome to Media Real Validator! Our platform uses the Solana blockchain to securely store checksums of your media files, ensuring the authenticity and integrity of your photos and videos. By utilizing blockchain technology, we can help combat deepfake and unauthorized modifications.</p>
+        <div class="progress-indicator">
+            <div class="step" id="step1"><i class="fas fa-wallet"></i> Connect Wallet</div>
+            <div class="step" id="step2"><i class="fas fa-user-plus"></i> Create Account</div>
+            <div class="step" id="step3"><i class="fas fa-upload"></i> Upload Checksum</div>
+        </div>
         <div class="center-buttons">
-            <button id="connectWallet" class="button">Connect Wallet</button>
-            <button id="createAccount" class="button" disabled>Create Account</button>
-            <button id="uploadChecksum" class="button" disabled>Upload Checksum</button>
+            <button id="connectWallet" class="button"><i class="fas fa-wallet"></i> Connect Wallet</button>
+            <button id="createAccount" class="button" disabled><i class="fas fa-user-plus"></i> Create Account</button>
+            <button id="uploadChecksum" class="button" disabled><i class="fas fa-upload"></i> Upload Checksum</button>
         </div>
         <div id="publicKeyDisplay" class="public-key-display"></div>
         <div id="statusMessage" class="status-message"></div>
+        <div class="loader" id="loader"></div>
         <div class="faq-section">
             <h2>FAQ</h2>
             <div class="faq-item">
-                <h3>Why do we use the Solana blockchain?</h3>
+                <h3><i class="fas fa-question-circle"></i> Why do we use the Solana blockchain?</h3>
                 <p>The Solana blockchain is known for its high speed and low transaction costs, making it an ideal choice for storing media checksums securely and efficiently. By using the blockchain, we ensure that the checksums are immutable and publicly verifiable, which helps prevent deepfakes and unauthorized modifications.</p>
             </div>
             <div class="faq-item">
-                <h3>Why do we need to connect a wallet?</h3>
+                <h3><i class="fas fa-question-circle"></i> Why do we need to connect a wallet?</h3>
                 <p>Connecting a wallet allows us to authenticate your identity and link your media checksums to your account securely. It also enables you to manage your assets and transactions on the blockchain.</p>
             </div>
             <div class="faq-item">
-                <h3>Why do we need to create an account and upload payload?</h3>
+                <h3><i class="fas fa-question-circle"></i> Why do we need to create an account and upload payload?</h3>
                 <p>Creating an account on the blockchain allows us to store your media checksums securely. Uploading the checksum payload ensures that your media files are registered on the blockchain, making it easy to verify their authenticity.</p>
             </div>
             <div class="faq-item">
-                <h3>What is the commission that will be paid?</h3>
+                <h3><i class="fas fa-question-circle"></i> What is the commission that will be paid?</h3>
                 <p>When you upload a checksum, a small commission is paid to cover the transaction costs on the Solana network. This fee helps maintain the network's security and performance. Another small fee is paid to the developer, in order to cover the development and updates made on the platform.</p>
             </div>
+        </div>
+    </div>
+    <div id="verifyModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Verify Checksum</h2>
+            <p>Enter the checksum and media type to verify:</p>
+            <!-- Add input fields here if needed in the future -->
+            <button id="verifyChecksumButton" class="button">Verify</button>
+            <div id="verifyResult"></div>
         </div>
     </div>
     <script src="client.js" type="module"></script>

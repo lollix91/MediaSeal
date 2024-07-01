@@ -4,7 +4,6 @@ import {
     PublicKey,
     Transaction,
     SystemProgram,
-    sendAndConfirmTransaction,
     TransactionInstruction
 } from '@solana/web3.js';
 
@@ -30,6 +29,10 @@ document.addEventListener("DOMContentLoaded", async () => {
     const publicVerifyChecksumButton = document.getElementById("publicVerifyChecksum");
     const publicKeyDisplay = document.getElementById("publicKeyDisplay");
     const statusMessage = document.getElementById("statusMessage");
+    const darkModeToggle = document.getElementById('darkModeToggle');
+    const modal = document.getElementById('verifyModal');
+    const closeButton = document.getElementsByClassName('close')[0];
+    const verifyChecksumButton = document.getElementById('verifyChecksumButton');
 
     let provider = null;
     let connection = new Connection("https://api.testnet.solana.com", 'confirmed');
@@ -52,8 +55,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         window.open("https://phantom.app/", "_blank");
     }
 
+    function showLoader() {
+        document.getElementById('loader').style.display = 'block';
+    }
+
+    function hideLoader() {
+        document.getElementById('loader').style.display = 'none';
+    }
+
+    function updateProgress(step) {
+        const steps = document.querySelectorAll('.step');
+        steps.forEach((s, index) => {
+            if (index < step) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
+    }
+
     async function createAccount() {
         createAccountButton.disabled = true;
+        showLoader();
         const lamports = await connection.getMinimumBalanceForRentExemption(34);
 
         const transaction = new Transaction().add(
@@ -83,15 +106,18 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             uploadChecksumButton.disabled = false;
             showStatus("Account created successfully!");
+            updateProgress(2);
         } catch (err) {
             console.error("Failed to create account", err);
             showStatus("Failed to create account", true);
             createAccountButton.disabled = false;
         }
+        hideLoader();
     }
 
     async function uploadChecksum(checksum, mediaType) {
-		uploadChecksumButton.disabled = true;
+        uploadChecksumButton.disabled = true;
+        showLoader();
         let checksumBytes;
         if (typeof checksum === 'string') {
             if (checksum.length !== 64) {
@@ -127,7 +153,6 @@ document.addEventListener("DOMContentLoaded", async () => {
             transaction.recentBlockhash = blockhash;
             transaction.feePayer = payer;
 
-            uploadChecksumButton.disabled = true;
             const signedTransaction = await provider.signTransaction(transaction);
             const serializedTransaction = signedTransaction.serialize();
             const signature = await connection.sendRawTransaction(serializedTransaction);
@@ -135,15 +160,17 @@ document.addEventListener("DOMContentLoaded", async () => {
             await connection.confirmTransaction(signature);
             console.log("Checksum uploaded successfully");
             showStatus("Checksum uploaded successfully!");
-            uploadChecksumButton.disabled = false;
+            updateProgress(3);
         } catch (err) {
             console.error("Failed to upload checksum", err);
             showStatus("Failed to upload checksum", true);
-            uploadChecksumButton.disabled = false;
         }
+        uploadChecksumButton.disabled = false;
+        hideLoader();
     }
 
     async function publicVerifyChecksum(accountPubkey, checksum, mediaType) {
+        showLoader();
         let checksumBytes;
         if (typeof checksum === 'string') {
             if (checksum.length !== 64) {
@@ -161,6 +188,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (accountInfo === null) {
                 console.log("Account not found");
                 showStatus("Account not found", true);
+                hideLoader();
                 return;
             }
 
@@ -174,6 +202,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (signatures.length === 0) {
                     console.log("No transactions found for this account");
                     showStatus("No transactions found for this account", true);
+                    hideLoader();
                     return;
                 }
 
@@ -193,6 +222,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error("Failed to verify checksum", err);
             showStatus("Failed to verify checksum", true);
         }
+        hideLoader();
     }
 
     function compareChecksums(storedChecksum, providedChecksum) {
@@ -208,6 +238,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         if (!provider) return;
 
         try {
+            showLoader();
             await provider.connect();
             payer = provider.publicKey;
             console.log("Connected with public key:", payer.toString());
@@ -215,23 +246,46 @@ document.addEventListener("DOMContentLoaded", async () => {
             connectWalletButton.disabled = true;
             createAccountButton.disabled = false;
             showStatus("Wallet connected successfully!");
+            updateProgress(1);
         } catch (err) {
             console.error("Failed to connect to Phantom wallet", err);
             showStatus("Failed to connect to Phantom wallet", true);
         }
+        hideLoader();
     };
+
     createAccountButton.onclick = createAccount;
+
     uploadChecksumButton.onclick = async () => {
         const checksum = "8a9f17b09aa5c3baa1bba66ffa0ad3c5e56ecebefac0b14e0b5abffa8b473ef5";
         const mediaType = 1;
 
         await uploadChecksum(checksum, mediaType);
     };
-    publicVerifyChecksumButton.onclick = async () => {
+
+    publicVerifyChecksumButton.onclick = () => {
+        modal.style.display = 'block';
+    };
+
+    closeButton.onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    verifyChecksumButton.onclick = async () => {
         const accountPubkey = prompt("Enter the account public key to verify:");
         const checksum = "8a9f17b09aa5c3baa1bba66ffa0ad3c5e56ecebefac0b14e0b5abffa8b473ef5";
         const mediaType = 1;
 
         await publicVerifyChecksum(accountPubkey, checksum, mediaType);
     };
+
+    window.onclick = (event) => {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    };
+
+    darkModeToggle.addEventListener('change', () => {
+        document.body.classList.toggle('dark-mode');
+    });
 });
