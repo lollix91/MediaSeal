@@ -49,7 +49,6 @@ document.addEventListener("DOMContentLoaded", async () => {
     const dropArea = document.getElementById('drop-area');
     const fileElem = document.getElementById('fileElem');
     const fileInfo = document.getElementById('fileInfo');
-    const fileVerifyInput = document.getElementById('fileVerifyInput');
     const mediaTypeSelect = document.getElementById('mediaTypeSelect');
 
     let provider = null;
@@ -420,18 +419,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     fileElem.addEventListener('change', async function() {
         await handleFiles(this.files[0]);
-    });
-
-    fileVerifyInput.addEventListener('change', async function() {
-        const file = this.files[0];
-        const publicKey = publicKeyInput.value;
-        const mediaType = parseInt(mediaTypeSelect.value);
-        if (!file || !publicKey) {
-            showVerifyResult("Please select a file and enter the public key", true);
-            return;
-        }
-        const checksum = await calculateChecksum(file);
-        await publicVerifyChecksum(publicKey, checksum, mediaType);
     });
 
     mediaFileInput.addEventListener('change', function() {
