@@ -59,6 +59,15 @@ document.addEventListener("DOMContentLoaded", async () => {
     let newAccount = Keypair.generate();
     let selectedFile = null;
 
+    // FAQ functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const answer = question.nextElementSibling;
+            answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+
     function showStatus(message, isError = false) {
         statusMessage.textContent = message;
         statusMessage.style.color = isError ? 'red' : 'green';
@@ -140,7 +149,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             await connection.confirmTransaction(signature);
             console.log(`New account created. Write this key in a safe place, you will need it to check media checksums in the future. Public key: ${newAccount.publicKey.toBase58()}`);
-            publicKeyDisplay.innerHTML = `New account created. Write this key in a safe place, you will need it to check media checksums in the future. Public key:<br><p style="color:red;">${newAccount.publicKey.toBase58()}</p>`;
+            publicKeyDisplay.innerHTML = `New account created. <b>Copy THIS KEY and the ORIGINAL media file in a safe place</b>, you will need it to check media checksums in the future. Public key:<br><p style="color:red;">${newAccount.publicKey.toBase58()}</p>`;
 
             uploadChecksumButton.disabled = true;
             showStatus("Account created successfully! Please select a file to upload its checksum.");
@@ -208,8 +217,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function publicVerifyChecksum(accountPubkey, checksum, mediaType) {
-		showVerifyLoader();
-		disableVerifyButtons();
+        showVerifyLoader();
+        disableVerifyButtons();
         let checksumBytes;
         if (typeof checksum === 'string') {
             if (checksum.length !== 64) {
@@ -227,7 +236,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             if (accountInfo === null) {
                 console.log("Account not found");
                 showVerifyResult("Account not found", true);
-                hideLoader();
+                hideVerifyLoader();
+                enableVerifyButtons();
                 return;
             }
 
@@ -241,7 +251,8 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (signatures.length === 0) {
                     console.log("No transactions found for this account");
                     showVerifyResult("No transactions found for this account", true);
-                    hideLoader();
+                    hideVerifyLoader();
+                    enableVerifyButtons();
                     return;
                 }
 
@@ -268,7 +279,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             showVerifyResult("Failed to verify checksum", true);
         }
         hideVerifyLoader();
-		enableVerifyButtons();
+        enableVerifyButtons();
     }
 
     function compareChecksums(storedChecksum, providedChecksum) {
@@ -301,6 +312,22 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.error('Error calculating checksum:', error);
             showStatus('Error calculating checksum', true);
             uploadChecksumButton.disabled = true;
+        }
+    }
+
+    function showVerifyResult(message, isError = false, mediaType = null, checksum = null, transactionDateTime = null) {
+        verifyResult.innerHTML = `<div class="verify-result ${isError ? 'error' : 'success'}">
+            <h3><i class="fas ${isError ? 'fa-times-circle' : 'fa-check-circle'}"></i> ${message}</h3>
+        </div>`;
+        
+        if (!isError && mediaType !== null && checksum !== null && transactionDateTime !== null) {
+            verifyResult.innerHTML += `
+                <div class="verify-details">
+                    <p><i class="fas ${mediaType === 1 ? 'fa-image' : 'fa-video'}"></i> <strong>Media Type:</strong> ${mediaType === 1 ? 'Image' : 'Video'}</p>
+                    <p><i class="fas fa-fingerprint"></i> <strong>Checksum Found:</strong> <span class="checksum">${checksum}</span></p>
+                    <p><i class="far fa-clock"></i> <strong>Transaction Date and Time:</strong> ${transactionDateTime}</p>
+                </div>
+            `;
         }
     }
 
@@ -367,7 +394,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             return;
         }
         const checksum = await calculateChecksum(file);
-        await publicVerifyChecksum(publicKey, checksum, getMediaType(file));
+		await publicVerifyChecksum(publicKey, checksum, getMediaType(file));
     };
 
     window.onclick = (event) => {
@@ -419,7 +446,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         await handleFiles(file);
     }
 
- async function handleMediaDrop(e) {
+    async function handleMediaDrop(e) {
         const dt = e.dataTransfer;
         const file = dt.files[0];
         if (file) {
@@ -457,46 +484,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         mediaInputArea.style.display = 'none';
     }
 
-function showVerifyResult(message, isError = false, mediaType = null, checksum = null, transactionDateTime = null) {
-    verifyResult.innerHTML = `<div class="verify-result ${isError ? 'error' : 'success'}">
-        <h3><i class="fas ${isError ? 'fa-times-circle' : 'fa-check-circle'}"></i> ${message}</h3>
-    </div>`;
-    
-    if (!isError && mediaType !== null && checksum !== null && transactionDateTime !== null) {
-        verifyResult.innerHTML += `
-            <div class="verify-details">
-                <p><i class="fas ${mediaType === 1 ? 'fa-image' : 'fa-video'}"></i> <strong>Media Type:</strong> ${mediaType === 1 ? 'Image' : 'Video'}</p>
-                <p><i class="fas fa-fingerprint"></i> <strong>Checksum Found:</strong> <span class="checksum">${checksum}</span></p>
-                <p><i class="far fa-clock"></i> <strong>Transaction Date and Time:</strong> ${transactionDateTime}</p>
-            </div>
-        `;
-    }
-}
-
     function getMediaType(file) {
         return file.type.startsWith('image/') ? 1 : 0; // 1 for image, 0 for video
     }
-	
-	
-	
-function showVerifyLoader() {
-    document.getElementById('verifyLoader').style.display = 'block';
-}
 
-function hideVerifyLoader() {
-    document.getElementById('verifyLoader').style.display = 'none';
-}
+    function showVerifyLoader() {
+        document.getElementById('verifyLoader').style.display = 'block';
+    }
 
-function disableVerifyButtons() {
-    verifyChecksumButton.disabled = true;
-    verifyMediaButton.disabled = true;
-}
+    function hideVerifyLoader() {
+        document.getElementById('verifyLoader').style.display = 'none';
+    }
 
-function enableVerifyButtons() {
-    verifyChecksumButton.disabled = false;
-    verifyMediaButton.disabled = false;
-}	
-	
-	
-	
+    function disableVerifyButtons() {
+        verifyChecksumButton.disabled = true;
+        verifyMediaButton.disabled = true;
+    }
+
+    function enableVerifyButtons() {
+        verifyChecksumButton.disabled = false;
+        verifyMediaButton.disabled = false;
+    }
 });

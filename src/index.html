@@ -16,52 +16,61 @@
         <button id="publicVerifyChecksum" class="button"><i class="fas fa-check-circle"></i> Verify Checksum</button>
     </div>
     <div class="container">
-        <h1><i class="fas fa-shield-alt"></i> Media Real Validator</h1>
-        <p>Welcome to Media Real Validator! Our platform uses the Solana blockchain to securely store checksums of your media files, ensuring the authenticity and integrity of your photos and videos. By utilizing blockchain technology, we can help combat deepfake and unauthorized modifications.</p>
+        <header>
+            <h1><i class="fas fa-shield-alt"></i> Media Real Validator</h1>
+            <p class="main-description">Welcome to Media Real Validator! Our platform uses the Solana blockchain to securely store checksums of your media files, ensuring the authenticity and integrity of your photos and videos. By utilizing blockchain technology, we can help combat deepfake and unauthorized modifications.</p>
+        </header>
+
+
         <div class="progress-indicator">
             <div class="step" id="step1"><i class="fas fa-wallet"></i> Connect Wallet</div>
             <div class="step" id="step2"><i class="fas fa-user-plus"></i> Create Account</div>
             <div class="step" id="step3"><i class="fas fa-upload"></i> Upload Checksum</div>
         </div>
-        <div class="center-buttons">
-            <button id="connectWallet" class="button"><i class="fas fa-wallet"></i> Connect Wallet</button>
-            <button id="createAccount" class="button" disabled><i class="fas fa-user-plus"></i> Create Account</button>
-            <button id="uploadChecksum" class="button" disabled><i class="fas fa-upload"></i> Upload Checksum</button>
+
+        <div class="action-buttons">
+            <button id="connectWallet" class="button button-primary"><i class="fas fa-wallet"></i> Connect Wallet</button>
+            <button id="createAccount" class="button button-secondary" disabled><i class="fas fa-user-plus"></i> Create Account</button>
+            <button id="uploadChecksum" class="button button-secondary" disabled><i class="fas fa-upload"></i> Upload Checksum</button>
         </div>
-        <div id="fileInputArea" style="display: none;">
+
+        <div id="fileInputArea" class="file-input-area" style="display: none;">
             <h3>Upload a file to calculate its checksum</h3>
             <div id="drop-area">
                 <form class="my-form">
-                    <p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region</p>
+                    <p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region. Your uploaded file will never be stored on our side.</p>
                     <input type="file" id="fileElem" accept="image/*,video/*">
                     <label class="button" for="fileElem">Select a file</label>
                 </form>
             </div>
             <div id="fileInfo"></div>
         </div>
+
         <div id="publicKeyDisplay" class="public-key-display"></div>
         <div id="statusMessage" class="status-message"></div>
         <div class="loader" id="loader"></div>
+
         <div class="faq-section">
-            <h2>FAQ</h2>
+            <h2>Frequently Asked Questions</h2>
             <div class="faq-item">
-                <h3><i class="fas fa-question-circle"></i> Why do we use the Solana blockchain?</h3>
-                <p>The Solana blockchain is known for its high speed and low transaction costs, making it an ideal choice for storing media checksums securely and efficiently. By using the blockchain, we ensure that the checksums are immutable and publicly verifiable, which helps prevent deepfakes and unauthorized modifications.</p>
+                <div class="faq-question"><i class="fas fa-question-circle"></i> Why do we use the Solana blockchain?</div>
+                <div class="faq-answer">The Solana blockchain is known for its high speed and low transaction costs, making it an ideal choice for storing media checksums securely and efficiently. By using the blockchain, we ensure that the checksums are immutable and publicly verifiable, which helps prevent deepfakes and unauthorized modifications.</div>
             </div>
             <div class="faq-item">
-                <h3><i class="fas fa-question-circle"></i> Why do we need to connect a wallet?</h3>
-                <p>Connecting a wallet allows us to authenticate your identity and link your media checksums to your account securely. It also enables you to manage your assets and transactions on the blockchain.</p>
+                <div class="faq-question"><i class="fas fa-question-circle"></i> Why do we need to connect a wallet?</div>
+                <div class="faq-answer">Connecting a wallet allows us to authenticate your identity and link your media checksums to your account securely. It also enables you to manage your assets and transactions on the blockchain.</div>
             </div>
             <div class="faq-item">
-                <h3><i class="fas fa-question-circle"></i> Why do we need to create an account and upload payload?</h3>
-                <p>Creating an account on the blockchain allows us to store your media checksums securely. Uploading the checksum payload ensures that your media files are registered on the blockchain, making it easy to verify their authenticity.</p>
+                <div class="faq-question"><i class="fas fa-question-circle"></i> Why do we need to create an account and upload payload?</div>
+                <div class="faq-answer">Creating an account on the blockchain allows us to store your media checksums securely. Uploading the checksum payload ensures that your media files are registered on the blockchain, making it easy to verify their authenticity.</div>
             </div>
             <div class="faq-item">
-                <h3><i class="fas fa-question-circle"></i> What is the commission that will be paid?</h3>
-                <p>When you upload a checksum, a small commission is paid to cover the transaction costs on the Solana network. This fee helps maintain the network's security and performance. Another small fee is paid to the developer, in order to cover the development and updates made on the platform.</p>
+                <div class="faq-question"><i class="fas fa-question-circle"></i> What is the commission that will be paid?</div>
+                <div class="faq-answer">When you upload a checksum, a small commission is paid to cover the transaction costs on the Solana network. This fee helps maintain the network's security and performance. Another small fee is paid to the developer, in order to cover the development and updates made on the platform.</div>
             </div>
         </div>
     </div>
+
     <div id="verifyModal" class="modal">
         <div class="modal-content">
             <span class="close">&times;</span>
@@ -79,20 +88,21 @@
                 </select>
                 <button id="verifyChecksumButton" class="button">Verify Checksum</button>
             </div>
-<div id="mediaInputArea" style="display:none;">
-    <div id="mediaDropArea">
-        <p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region</p>
-        <input type="file" id="mediaFileInput" accept="image/*,video/*">
-        <label class="button" for="mediaFileInput">Select a file</label>
-    </div>
-    <div id="mediaFileInfo"></div>
-    <input type="text" id="mediaPublicKeyInput" placeholder="Enter public key">
-    <button id="verifyMediaButton" class="button">Verify Media</button>
-</div>
-		<div id="verifyLoader" class="loader" style="display:none;"></div>
+            <div id="mediaInputArea" style="display:none;">
+                <div id="mediaDropArea">
+                    <p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region</p>
+                    <input type="file" id="mediaFileInput" accept="image/*,video/*">
+                    <label class="button" for="mediaFileInput">Select a file</label>
+                </div>
+                <div id="mediaFileInfo"></div>
+                <input type="text" id="mediaPublicKeyInput" placeholder="Enter public key">
+                <button id="verifyMediaButton" class="button">Verify Media</button>
+            </div>
+            <div id="verifyLoader" class="loader" style="display:none;"></div>
             <div id="verifyResult"></div>
         </div>
     </div>
+
     <script src="client.js" type="module"></script>
 </body>
 </html>
