@@ -457,17 +457,21 @@ document.addEventListener("DOMContentLoaded", async () => {
         mediaInputArea.style.display = 'none';
     }
 
-    function showVerifyResult(message, isError = false, mediaType = null, checksum = null, transactionDateTime = null) {
-        verifyResult.innerHTML = `<p>${message}</p>`;
-        verifyResult.style.color = isError ? 'red' : 'green';
-        if (!isError && mediaType !== null && checksum !== null && transactionDateTime !== null) {
-            verifyResult.innerHTML += `
-                <p>Media Type: ${mediaType === 1 ? 'Image' : 'Video'}</p>
-                <p>Checksum Found: ${checksum}</p>
-                <p>Transaction Date and Time: ${transactionDateTime}</p>
-            `;
-        }
+function showVerifyResult(message, isError = false, mediaType = null, checksum = null, transactionDateTime = null) {
+    verifyResult.innerHTML = `<div class="verify-result ${isError ? 'error' : 'success'}">
+        <h3><i class="fas ${isError ? 'fa-times-circle' : 'fa-check-circle'}"></i> ${message}</h3>
+    </div>`;
+    
+    if (!isError && mediaType !== null && checksum !== null && transactionDateTime !== null) {
+        verifyResult.innerHTML += `
+            <div class="verify-details">
+                <p><i class="fas ${mediaType === 1 ? 'fa-image' : 'fa-video'}"></i> <strong>Media Type:</strong> ${mediaType === 1 ? 'Image' : 'Video'}</p>
+                <p><i class="fas fa-fingerprint"></i> <strong>Checksum Found:</strong> <span class="checksum">${checksum}</span></p>
+                <p><i class="far fa-clock"></i> <strong>Transaction Date and Time:</strong> ${transactionDateTime}</p>
+            </div>
+        `;
     }
+}
 
     function getMediaType(file) {
         return file.type.startsWith('image/') ? 1 : 0; // 1 for image, 0 for video
