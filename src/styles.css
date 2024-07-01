@@ -256,3 +256,38 @@ body {
     margin-top: 20px;
     font-weight: bold;
 }
+
+#mediaDropArea {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    width: 460px;
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#mediaDropArea.highlight {
+    border-color: purple;
+}
+
+#mediaFileInput {
+    display: none;
+}
+
+#mediaFileInfo {
+    margin-top: 10px;
+}
+
+#mediaDropArea label.button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: var(--button-bg);
+    color: var(--button-text);
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#mediaDropArea label.button:hover {
+    background-color: var(--button-hover);
+}

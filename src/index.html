@@ -79,14 +79,16 @@
                 </select>
                 <button id="verifyChecksumButton" class="button">Verify Checksum</button>
             </div>
-            <div id="mediaInputArea" style="display:none;">
-                <div id="mediaDropArea">
-                    <p>Drag and drop a file here or click to select. No file will be stored on our side.</p>
-                    <input type="file" id="mediaFileInput" accept="image/*,video/*">
-                </div>
-                <input type="text" id="mediaPublicKeyInput" placeholder="Enter public key">
-                <button id="verifyMediaButton" class="button">Verify Media</button>
-            </div>
+<div id="mediaInputArea" style="display:none;">
+    <div id="mediaDropArea">
+        <p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region</p>
+        <input type="file" id="mediaFileInput" accept="image/*,video/*">
+        <label class="button" for="mediaFileInput">Select a file</label>
+    </div>
+    <div id="mediaFileInfo"></div>
+    <input type="text" id="mediaPublicKeyInput" placeholder="Enter public key">
+    <button id="verifyMediaButton" class="button">Verify Media</button>
+</div>
             <div id="verifyResult"></div>
         </div>
     </div>
