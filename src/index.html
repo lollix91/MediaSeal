@@ -28,26 +28,20 @@
             <button id="createAccount" class="button" disabled><i class="fas fa-user-plus"></i> Create Account</button>
             <button id="uploadChecksum" class="button" disabled><i class="fas fa-upload"></i> Upload Checksum</button>
         </div>
-		
-<!-- Add this after the center-buttons div -->
-<div id="fileInputArea" style="display: none;">
-    <h3>Upload a file to calculate its checksum</h3>
-    <div id="drop-area">
-        <form class="my-form">
-            <p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region</p>
-            <input type="file" id="fileElem" accept="image/*,video/*">
-            <label class="button" for="fileElem">Select a file</label>
-        </form>
-    </div>
-    <div id="fileInfo"></div>
-</div>		
-		
+        <div id="fileInputArea" style="display: none;">
+            <h3>Upload a file to calculate its checksum</h3>
+            <div id="drop-area">
+                <form class="my-form">
+                    <p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region</p>
+                    <input type="file" id="fileElem" accept="image/*,video/*">
+                    <label class="button" for="fileElem">Select a file</label>
+                </form>
+            </div>
+            <div id="fileInfo"></div>
+        </div>
         <div id="publicKeyDisplay" class="public-key-display"></div>
         <div id="statusMessage" class="status-message"></div>
         <div class="loader" id="loader"></div>
-		
-		
-		
         <div class="faq-section">
             <h2>FAQ</h2>
             <div class="faq-item">
@@ -68,30 +62,36 @@
             </div>
         </div>
     </div>
-<div id="verifyModal" class="modal">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Verify Checksum</h2>
-        <div id="verifyOptions">
-            <button id="verifyChecksumOption" class="button">I have a checksum</button>
-            <button id="verifyMediaOption" class="button">I have a media file</button>
-        </div>
-        <div id="checksumInputArea" style="display:none;">
-            <input type="text" id="checksumInput" placeholder="Enter checksum">
-            <input type="text" id="publicKeyInput" placeholder="Enter public key">
-            <button id="verifyChecksumButton" class="button">Verify Checksum</button>
-        </div>
-        <div id="mediaInputArea" style="display:none;">
-            <div id="mediaDropArea">
-                <p>Drag and drop a file here or click to select</p>
-                <input type="file" id="mediaFileInput" accept="image/*,video/*">
+    <div id="verifyModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Verify Checksum</h2>
+            <div id="verifyOptions">
+                <button id="verifyChecksumOption" class="button">I have a checksum</button>
+                <button id="verifyMediaOption" class="button">I have a media file</button>
             </div>
-            <input type="text" id="mediaPublicKeyInput" placeholder="Enter public key">
-            <button id="verifyMediaButton" class="button">Verify Media</button>
+            <div id="checksumInputArea" style="display:none;">
+                <input type="text" id="checksumInput" placeholder="Enter checksum">
+                <input type="text" id="publicKeyInput" placeholder="Enter public key">
+                <select id="mediaTypeSelect">
+                    <option value="1">Image</option>
+                    <option value="0">Video</option>
+                </select>
+                <button id="verifyChecksumButton" class="button">Verify Checksum</button>
+                <input type="file" id="fileVerifyInput" accept="image/*,video/*" style="display:none;">
+                <label class="button" for="fileVerifyInput">Select a file to verify</label>
+            </div>
+            <div id="mediaInputArea" style="display:none;">
+                <div id="mediaDropArea">
+                    <p>Drag and drop a file here or click to select</p>
+                    <input type="file" id="mediaFileInput" accept="image/*,video/*">
+                </div>
+                <input type="text" id="mediaPublicKeyInput" placeholder="Enter public key">
+                <button id="verifyMediaButton" class="button">Verify Media</button>
+            </div>
+            <div id="verifyResult"></div>
         </div>
-        <div id="verifyResult"></div>
     </div>
-</div>
     <script src="client.js" type="module"></script>
 </body>
 </html>

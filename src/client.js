@@ -49,6 +49,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const dropArea = document.getElementById('drop-area');
     const fileElem = document.getElementById('fileElem');
     const fileInfo = document.getElementById('fileInfo');
+    const fileVerifyInput = document.getElementById('fileVerifyInput');
+    const mediaTypeSelect = document.getElementById('mediaTypeSelect');
 
     let provider = null;
     let connection = new Connection("https://api.testnet.solana.com", 'confirmed');
@@ -341,11 +343,12 @@ document.addEventListener("DOMContentLoaded", async () => {
     verifyChecksumButton.onclick = async () => {
         const checksum = checksumInput.value;
         const publicKey = publicKeyInput.value;
+        const mediaType = parseInt(mediaTypeSelect.value);
         if (!checksum || !publicKey) {
             showVerifyResult("Please enter both checksum and public key", true);
             return;
         }
-        await publicVerifyChecksum(publicKey, checksum, 1); // Assuming mediaType 1 for now
+        await publicVerifyChecksum(publicKey, checksum, mediaType);
     };
 
     verifyMediaButton.onclick = async () => {
@@ -419,7 +422,19 @@ document.addEventListener("DOMContentLoaded", async () => {
         await handleFiles(this.files[0]);
     });
 
-	mediaFileInput.addEventListener('change', function() {
+    fileVerifyInput.addEventListener('change', async function() {
+        const file = this.files[0];
+        const publicKey = publicKeyInput.value;
+        const mediaType = parseInt(mediaTypeSelect.value);
+        if (!file || !publicKey) {
+            showVerifyResult("Please select a file and enter the public key", true);
+            return;
+        }
+        const checksum = await calculateChecksum(file);
+        await publicVerifyChecksum(publicKey, checksum, mediaType);
+    });
+
+    mediaFileInput.addEventListener('change', function() {
         const file = this.files[0];
         if (file) {
             mediaDropArea.textContent = `Selected file: ${file.name}`;
