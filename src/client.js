@@ -91,16 +91,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         document.getElementById('loader').style.display = 'none';
     }
 
-    function updateProgress(step) {
-        const steps = document.querySelectorAll('.step');
-        steps.forEach((s, index) => {
-            if (index < step) {
-                s.classList.add('active');
-            } else {
-                s.classList.remove('active');
-            }
-        });
-    }
+
 
     function formatChecksum(checksum) {
         return checksum;
@@ -206,7 +197,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             await connection.confirmTransaction(signature);
             console.log("Checksum uploaded successfully");
-            showStatus("Checksum uploaded successfully!");
+            showStatus("Checksum uploaded successfully! Now you can store the public key and the original media file in a safe place. You can securely close this window or upload another media checksum file.");
             updateProgress(3);
         } catch (err) {
             console.error("Failed to upload checksum", err);
@@ -458,18 +449,28 @@ document.addEventListener("DOMContentLoaded", async () => {
         await handleFiles(this.files[0]);
     });
 
-    mediaFileInput.addEventListener('change', function() {
+    mediaFileInput.addEventListener('change', async function() {
         handleMediaFileSelect(this.files[0]);
     });
 
-    function handleMediaFileSelect(file) {
+    async function handleMediaFileSelect(file) {
         if (file) {
             mediaFileInfo.textContent = `Selected file: ${file.name}`;
-            
-            // Create a new FileList object
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(file);
-            mediaFileInput.files = dataTransfer.files;
+			verifyMediaButton.disabled = true; // Disable the verify button while calculating
+			calculatedChecksumDisplay.textContent = 'Calculating checksum...';
+			
+			try {
+				const checksum = await calculateChecksum(file);
+				calculatedChecksumDisplay.innerHTML = `
+					<strong>Calculated Checksum:</strong><br>
+					<span style="word-break: break-all;">${checksum}</span>
+				`;
+				verifyMediaButton.disabled = false; // Re-enable the verify button
+			} catch (error) {
+				console.error('Error calculating checksum:', error);
+				calculatedChecksumDisplay.textContent = 'Error calculating checksum';
+				verifyMediaButton.disabled = true;
+			}
         }
     }
 
@@ -505,4 +506,17 @@ document.addEventListener("DOMContentLoaded", async () => {
         verifyChecksumButton.disabled = false;
         verifyMediaButton.disabled = false;
     }
+	
+	function updateProgress(step) {
+        const steps = document.querySelectorAll('.timeline-step');
+        steps.forEach((s, index) => {
+            if (index < step) {
+                s.classList.add('active');
+            } else {
+                s.classList.remove('active');
+            }
+        });
+    }
+	
+
 });

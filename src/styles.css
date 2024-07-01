@@ -73,6 +73,7 @@ h1 {
     display: flex;
     justify-content: center;
     gap: 15px;
+	margin-top: 30px;
     margin-bottom: 30px;
 }
 
@@ -113,6 +114,22 @@ h1 {
     background-color: #f9f9f9;
     border-radius: 5px;
     border: 1px solid var(--border-color);
+}
+
+.public-key-display {
+	display: none;
+}
+
+.status-message {
+	display: none;
+}
+
+.public-key-display:not(:empty) {
+    display: block; /* Show when not empty */
+}
+
+.status-message:not(:empty) {
+    display: block; /* Show when not empty */
 }
 
 #drop-area {
@@ -241,7 +258,7 @@ label[for="fileElem"]:hover {
 #checksumInputArea input, #mediaInputArea input, #mediaTypeSelect {
     margin: 10px 0;
     padding: 10px;
-    width: 100%;
+    width: 90%;
     border: 1px solid var(--border-color);
     border-radius: 5px;
 }
@@ -437,4 +454,76 @@ body {
 
 .dark-mode .verify-details .checksum {
     background-color: #3c3c3c;
+}
+
+.timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+    position: relative;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background-color: #ddd;
+    z-index: 1;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    background-color: var(--bg-color);
+    padding: 0 10px;
+}
+
+.timeline-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #ddd;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.timeline-icon i {
+    color: #666;
+}
+
+.timeline-text {
+    font-size: 14px;
+    color: #666;
+    text-align: center;
+}
+
+/* Add styles for active state */
+.timeline-step.active .timeline-icon {
+    background-color: var(--button-bg);
+}
+
+.timeline-step.active .timeline-icon i {
+    color: white;
+}
+
+.timeline-step.active .timeline-text {
+    color: var(--button-bg);
+    font-weight: bold;
+}
+
+#calculatedChecksumDisplay {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #f0f0f0;
+    border-radius: 5px;
+    word-break: break-all;
 }
