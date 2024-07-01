@@ -6,6 +6,7 @@ import {
     SystemProgram,
     TransactionInstruction
 } from '@solana/web3.js';
+import { sha256 } from 'js-sha256';
 
 class Media {
     constructor(isInitialized, checksum, mediaType) {
@@ -32,13 +33,29 @@ document.addEventListener("DOMContentLoaded", async () => {
     const darkModeToggle = document.getElementById('darkModeToggle');
     const modal = document.getElementById('verifyModal');
     const closeButton = document.getElementsByClassName('close')[0];
+    const verifyChecksumOption = document.getElementById('verifyChecksumOption');
+    const verifyMediaOption = document.getElementById('verifyMediaOption');
+    const checksumInputArea = document.getElementById('checksumInputArea');
+    const mediaInputArea = document.getElementById('mediaInputArea');
     const verifyChecksumButton = document.getElementById('verifyChecksumButton');
+    const verifyMediaButton = document.getElementById('verifyMediaButton');
+    const checksumInput = document.getElementById('checksumInput');
+    const publicKeyInput = document.getElementById('publicKeyInput');
+    const mediaPublicKeyInput = document.getElementById('mediaPublicKeyInput');
+    const mediaFileInput = document.getElementById('mediaFileInput');
+    const mediaDropArea = document.getElementById('mediaDropArea');
+    const verifyResult = document.getElementById('verifyResult');
+    const fileInputArea = document.getElementById('fileInputArea');
+    const dropArea = document.getElementById('drop-area');
+    const fileElem = document.getElementById('fileElem');
+    const fileInfo = document.getElementById('fileInfo');
 
     let provider = null;
     let connection = new Connection("https://api.testnet.solana.com", 'confirmed');
     let programId = new PublicKey("BDoTMxmU7DBHT8Q75nZdqJ228ZhDdWnQjsyvLtRy9VRx");
     let payer = null;
     let newAccount = Keypair.generate();
+    let selectedFile = null;
 
     function showStatus(message, isError = false) {
         statusMessage.textContent = message;
@@ -74,6 +91,25 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 
+    function formatChecksum(checksum) {
+        return checksum;
+    }
+
+    function calculateChecksum(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const binary = event.target.result;
+                const checksum = sha256(binary);
+                resolve(checksum);
+            };
+            reader.onerror = function(error) {
+                reject(error);
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    }
+
     async function createAccount() {
         createAccountButton.disabled = true;
         showLoader();
@@ -104,8 +140,9 @@ document.addEventListener("DOMContentLoaded", async () => {
             console.log(`New account created. Write this key in a safe place, you will need it to check media checksums in the future. Public key: ${newAccount.publicKey.toBase58()}`);
             publicKeyDisplay.innerHTML = `New account created. Write this key in a safe place, you will need it to check media checksums in the future. Public key:<br><p style="color:red;">${newAccount.publicKey.toBase58()}</p>`;
 
-            uploadChecksumButton.disabled = false;
-            showStatus("Account created successfully!");
+            uploadChecksumButton.disabled = true;
+            showStatus("Account created successfully! Please select a file to upload its checksum.");
+            fileInputArea.style.display = 'block';
             updateProgress(2);
         } catch (err) {
             console.error("Failed to create account", err);
@@ -115,40 +152,39 @@ document.addEventListener("DOMContentLoaded", async () => {
         hideLoader();
     }
 
-    async function uploadChecksum(checksum, mediaType) {
-        uploadChecksumButton.disabled = true;
-        showLoader();
-        let checksumBytes;
-        if (typeof checksum === 'string') {
-            if (checksum.length !== 64) {
-                throw new Error("Checksum string length must be 64 characters");
-            }
-            checksumBytes = new Uint8Array(checksum.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
-        } else if (checksum.length === 32) {
-            checksumBytes = checksum;
-        } else {
-            throw new Error("Checksum must be a 32-byte array or a 64-character hex string");
+    async function uploadChecksum() {
+        if (!selectedFile) {
+            showStatus('Please select a file first', true);
+            return;
         }
 
-        const instructionData = new Uint8Array([0, ...checksumBytes, mediaType]);
-        const paymentAmount = 1000000;
-
-        const transaction = new Transaction().add(
-            new TransactionInstruction({
-                keys: [
-                    { pubkey: newAccount.publicKey, isSigner: false, isWritable: true },
-                ],
-                programId,
-                data: instructionData,
-            }),
-            SystemProgram.transfer({
-                fromPubkey: payer,
-                toPubkey: new PublicKey("GbCtp2K9E39sXLKfTyWUGMRgWbyh8XFPwaKx54aZyECc"),
-                lamports: paymentAmount,
-            })
-        );
+        uploadChecksumButton.disabled = true;
+        showLoader();
 
         try {
+            const checksum = await calculateChecksum(selectedFile);
+            const mediaType = selectedFile.type.startsWith('image/') ? 1 : 0;
+
+            const checksumBytes = new Uint8Array(checksum.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+
+            const instructionData = new Uint8Array([0, ...checksumBytes, mediaType]);
+            const paymentAmount = 1000000;
+
+            const transaction = new Transaction().add(
+                new TransactionInstruction({
+                    keys: [
+                        { pubkey: newAccount.publicKey, isSigner: false, isWritable: true },
+                    ],
+                    programId,
+                    data: instructionData,
+                }),
+                SystemProgram.transfer({
+                    fromPubkey: payer,
+                    toPubkey: new PublicKey("GbCtp2K9E39sXLKfTyWUGMRgWbyh8XFPwaKx54aZyECc"),
+                    lamports: paymentAmount,
+                })
+            );
+
             const { blockhash } = await connection.getRecentBlockhash();
             transaction.recentBlockhash = blockhash;
             transaction.feePayer = payer;
@@ -187,7 +223,7 @@ document.addEventListener("DOMContentLoaded", async () => {
             const accountInfo = await connection.getAccountInfo(new PublicKey(accountPubkey));
             if (accountInfo === null) {
                 console.log("Account not found");
-                showStatus("Account not found", true);
+                showVerifyResult("Account not found", true);
                 hideLoader();
                 return;
             }
@@ -201,7 +237,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 const signatures = await connection.getSignaturesForAddress(new PublicKey(accountPubkey));
                 if (signatures.length === 0) {
                     console.log("No transactions found for this account");
-                    showStatus("No transactions found for this account", true);
+                    showVerifyResult("No transactions found for this account", true);
                     hideLoader();
                     return;
                 }
@@ -213,14 +249,14 @@ document.addEventListener("DOMContentLoaded", async () => {
                 console.log(`Media Type: ${media.mediaType}`);
                 console.log(`Checksum Found: ${Buffer.from(media.checksum).toString('hex')}`);
                 console.log(`Transaction Date and Time: ${transactionDateTime}`);
-                showStatus("Checksum verification successful!");
+                showVerifyResult("Checksum verification successful!");
             } else {
                 console.log("Checksum verification failed");
-                showStatus("Checksum verification failed", true);
+                showVerifyResult("Checksum verification failed", true);
             }
         } catch (err) {
             console.error("Failed to verify checksum", err);
-            showStatus("Failed to verify checksum", true);
+            showVerifyResult("Failed to verify checksum", true);
         }
         hideLoader();
     }
@@ -233,6 +269,32 @@ document.addEventListener("DOMContentLoaded", async () => {
         return true;
     }
 
+    async function handleFiles(file) {
+        selectedFile = file;
+        fileInfo.textContent = `Selected file: ${file.name}`;
+        uploadChecksumButton.disabled = true;
+        showStatus("Calculating checksum...");
+        
+        try {
+            const checksum = await calculateChecksum(file);
+            console.log(`Calculated checksum: ${checksum}`);
+            
+            const formattedChecksum = formatChecksum(checksum);
+            fileInfo.innerHTML = `
+                Selected file: ${file.name}<br>
+                Calculated checksum: <p style="color:red;">${formattedChecksum}</p>
+            `;
+            
+            showStatus("Checksum calculated successfully!");
+            uploadChecksumButton.disabled = false;
+        } catch (error) {
+            console.error('Error calculating checksum:', error);
+            showStatus('Error calculating checksum', true);
+            uploadChecksumButton.disabled = true;
+        }
+    }
+
+    // Event Listeners
     connectWalletButton.onclick = async () => {
         provider = getProvider();
         if (!provider) return;
@@ -255,13 +317,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     };
 
     createAccountButton.onclick = createAccount;
-
-    uploadChecksumButton.onclick = async () => {
-        const checksum = "8a9f17b09aa5c3baa1bba66ffa0ad3c5e56ecebefac0b14e0b5abffa8b473ef5";
-        const mediaType = 1;
-
-        await uploadChecksum(checksum, mediaType);
-    };
+    uploadChecksumButton.onclick = uploadChecksum;
 
     publicVerifyChecksumButton.onclick = () => {
         modal.style.display = 'block';
@@ -269,23 +325,124 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     closeButton.onclick = () => {
         modal.style.display = 'none';
+        resetVerifyModal();
+    };
+
+    verifyChecksumOption.onclick = () => {
+        checksumInputArea.style.display = 'block';
+        mediaInputArea.style.display = 'none';
+    };
+
+    verifyMediaOption.onclick = () => {
+        checksumInputArea.style.display = 'none';
+        mediaInputArea.style.display = 'block';
     };
 
     verifyChecksumButton.onclick = async () => {
-        const accountPubkey = prompt("Enter the account public key to verify:");
-        const checksum = "8a9f17b09aa5c3baa1bba66ffa0ad3c5e56ecebefac0b14e0b5abffa8b473ef5";
-        const mediaType = 1;
+        const checksum = checksumInput.value;
+        const publicKey = publicKeyInput.value;
+        if (!checksum || !publicKey) {
+            showVerifyResult("Please enter both checksum and public key", true);
+            return;
+        }
+        await publicVerifyChecksum(publicKey, checksum, 1); // Assuming mediaType 1 for now
+    };
 
-        await publicVerifyChecksum(accountPubkey, checksum, mediaType);
+    verifyMediaButton.onclick = async () => {
+        const file = mediaFileInput.files[0];
+        const publicKey = mediaPublicKeyInput.value;
+        if (!file || !publicKey) {
+            showVerifyResult("Please select a file and enter the public key", true);
+            return;
+        }
+        const checksum = await calculateChecksum(file);
+        await publicVerifyChecksum(publicKey, checksum, getMediaType(file));
     };
 
     window.onclick = (event) => {
         if (event.target == modal) {
             modal.style.display = 'none';
+            resetVerifyModal();
         }
     };
 
     darkModeToggle.addEventListener('change', () => {
         document.body.classList.toggle('dark-mode');
     });
+
+    // File drag and drop functionality
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, preventDefaults, false);
+        mediaDropArea.addEventListener(eventName, preventDefaults, false);
+    });
+
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropArea.addEventListener(eventName, highlight, false);
+        mediaDropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropArea.addEventListener(eventName, unhighlight, false);
+        mediaDropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    function highlight(e) {
+        e.target.classList.add('highlight');
+    }
+
+    function unhighlight(e) {
+        e.target.classList.remove('highlight');
+    }
+
+    dropArea.addEventListener('drop', handleDrop, false);
+    mediaDropArea.addEventListener('drop', handleMediaDrop, false);
+
+    async function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        await handleFiles(file);
+    }
+
+    async function handleMediaDrop(e) {
+        const dt = e.dataTransfer;
+        const file = dt.files[0];
+        mediaFileInput.files = dt.files;
+        mediaDropArea.textContent = `Selected file: ${file.name}`;
+    }
+
+    fileElem.addEventListener('change', async function() {
+        await handleFiles(this.files[0]);
+    });
+
+	mediaFileInput.addEventListener('change', function() {
+        const file = this.files[0];
+        if (file) {
+            mediaDropArea.textContent = `Selected file: ${file.name}`;
+        }
+    });
+
+    function resetVerifyModal() {
+        checksumInput.value = '';
+        publicKeyInput.value = '';
+        mediaPublicKeyInput.value = '';
+        mediaFileInput.value = '';
+        mediaDropArea.textContent = 'Drag and drop a file here or click to select';
+        verifyResult.textContent = '';
+        checksumInputArea.style.display = 'none';
+        mediaInputArea.style.display = 'none';
+    }
+
+    function showVerifyResult(message, isError = false) {
+        verifyResult.textContent = message;
+        verifyResult.style.color = isError ? 'red' : 'green';
+    }
+
+    function getMediaType(file) {
+        return file.type.startsWith('image/') ? 1 : 0; // 1 for image, 0 for video
+    }
 });

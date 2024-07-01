@@ -191,3 +191,68 @@ body {
     text-decoration: none;
     cursor: pointer;
 }
+
+#drop-area {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    width: 480px;
+    max-width: 100%;
+    margin: 20px auto;
+    padding: 20px;
+}
+
+#drop-area.highlight {
+    border-color: purple;
+}
+
+.my-form {
+    margin-bottom: 10px;
+}
+
+#fileElem {
+    display: none;
+}
+
+#fileInfo {
+    margin-top: 10px;
+}
+
+#verifyOptions {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 20px;
+}
+
+#checksumInputArea, #mediaInputArea {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#checksumInputArea input, #mediaInputArea input {
+    margin: 10px 0;
+    padding: 5px;
+    width: 80%;
+}
+
+#mediaDropArea {
+    border: 2px dashed #ccc;
+    border-radius: 20px;
+    width: 80%;
+    margin: 20px auto;
+    padding: 20px;
+    text-align: center;
+}
+
+#mediaDropArea.highlight {
+    border-color: purple;
+}
+
+#mediaFileInput {
+    display: none;
+}
+
+#verifyResult {
+    margin-top: 20px;
+    font-weight: bold;
+}
