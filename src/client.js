@@ -53,8 +53,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mediaTypeSelect = document.getElementById('mediaTypeSelect');
 
     let provider = null;
-    let connection = new Connection("https://api.testnet.solana.com", 'confirmed');
-    let programId = new PublicKey("BDoTMxmU7DBHT8Q75nZdqJ228ZhDdWnQjsyvLtRy9VRx");
+    let connection = new Connection("https://api.mainnet-beta.solana.com", 'confirmed');
+    let programId = new PublicKey("2Hx22amfnUy897oNaAtMn7xgck3A3pwMpj8PtWcFK75Q");
     let payer = null;
     let newAccount = Keypair.generate();
     let selectedFile = null;
@@ -182,7 +182,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 }),
                 SystemProgram.transfer({
                     fromPubkey: payer,
-                    toPubkey: new PublicKey("GbCtp2K9E39sXLKfTyWUGMRgWbyh8XFPwaKx54aZyECc"),
+                    toPubkey: new PublicKey("3zm6dnPTSQ9Nxxort9n7qFy12kVkuwFz5HxkNYzU6FmE"),
                     lamports: paymentAmount,
                 })
             );
