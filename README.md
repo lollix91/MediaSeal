@@ -74,7 +74,7 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 
 ## Contact
 
-For any inquiries, please contact us at support@mediase.al or open an issue on our GitHub repository.
+For any inquiries, please open an issue on our GitHub repository or text us on [Reddit](https://www.reddit.com/r/MediaSeal/).
 
 [^1]: https://ieeexplore.ieee.org/abstract/document/8744244
 [^2]: https://ieeexplore.ieee.org/abstract/document/8513711
