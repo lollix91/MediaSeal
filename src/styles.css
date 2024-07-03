@@ -527,3 +527,8 @@ body {
     border-radius: 5px;
     word-break: break-all;
 }
+
+.logo {
+    max-width: 400px;
+    margin-bottom: 20px;
+}
