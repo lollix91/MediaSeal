@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MediaSeal</title>
-	<link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="../assets/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
 </head>
@@ -18,31 +18,30 @@
     </div>
     <div class="container">
         <header>
-		    <img src="../assets/logo.png" alt="MediaSeal Logo" class="logo">
+            <img src="../assets/logo.png" alt="MediaSeal Logo" class="logo">
             <p class="main-description">Welcome to MediaSeal. Our platform uses the Solana blockchain to securely store checksums of your media files, ensuring the authenticity and integrity of your photos and videos. By utilizing blockchain technology, we can help combat deepfake and unauthorized modifications.</p>
         </header>
 
-
-<div class="timeline">
-    <div class="timeline-step">
-        <div class="timeline-icon">
-            <i class="fas fa-wallet"></i>
-        </div>
-        <div class="timeline-text">Wallet Connected</div>
-    </div>
-    <div class="timeline-step">
-        <div class="timeline-icon">
-            <i class="fas fa-user-plus"></i>
-        </div>
-        <div class="timeline-text">Account Created</div>
-    </div>
-    <div class="timeline-step">
-        <div class="timeline-icon">
-            <i class="fas fa-upload"></i>
-        </div>
-        <div class="timeline-text">Checksum Uploaded</div>
-    </div>
-</div> 
+        <div class="timeline">
+            <div class="timeline-step">
+                <div class="timeline-icon">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div class="timeline-text">Wallet Connected</div>
+            </div>
+            <div class="timeline-step">
+                <div class="timeline-icon">
+                    <i class="fas fa-user-plus"></i>
+                </div>
+                <div class="timeline-text">Account Created</div>
+            </div>
+            <div class="timeline-step">
+                <div class="timeline-icon">
+                    <i class="fas fa-upload"></i>
+                </div>
+                <div class="timeline-text">Checksum Uploaded</div>
+            </div>
+        </div> 
 
         <div id="fileInputArea" class="file-input-area" style="display: none;">
             <h3>Upload a file to calculate its checksum</h3>
@@ -56,17 +55,37 @@
             <div id="fileInfo"></div>
         </div>
 
-
         <div id="publicKeyDisplay" class="public-key-display"></div>
         <div id="statusMessage" class="status-message"></div>
 
-		        <div class="action-buttons">
+        <div class="action-buttons">
             <button id="connectWallet" class="button button-primary"><i class="fas fa-wallet"></i> Connect Wallet</button>
             <button id="createAccount" class="button button-secondary" disabled><i class="fas fa-user-plus"></i> Create Account</button>
             <button id="uploadChecksum" class="button button-secondary" disabled><i class="fas fa-upload"></i> Upload Checksum</button>
         </div>		
 		
         <div class="loader" id="loader"></div>
+
+        <div class="project-info">
+            <h2>About MediaSeal</h2>
+            <p>MediaSeal is an innovative solution that leverages blockchain technology to verify the integrity of digital media content. Our project is built upon recent research in blockchain-based media verification, addressing the growing concern of deepfakes and media manipulation.</p>
+            <p>Key features of MediaSeal include:</p>
+            <ul>
+                <li>Secure storage of media checksums on the Solana blockchain</li>
+                <li>User-friendly interface for uploading and verifying media</li>
+				<li>No data is stored in our servers</li>
+                <li>Integration with blockchain wallets for secure transactions</li>
+                <li>Public verification of media integrity</li>
+            </ul>
+            <p>Our work is inspired by and builds upon the following research:</p>
+            <ul>
+                <li>Ghimire, S., et al. (2019). "Using blockchain for improved video integrity verification." IEEE Transactions on Multimedia.</li>
+                <li>Zelensky, A., et al. (2018). "Video content verification using blockchain technology." IEEE 4th International Conference on Smart Cloud.</li>
+                <li>Khan, P. W., et al. (2020). "A data verification system for CCTV surveillance cameras using blockchain technology in smart cities." Electronics.</li>
+                <li>Kamal, R., et al. (2021). "Video integrity verification based on blockchain." International Conference on Electronic Engineering.</li>
+            </ul>
+            <p>For more information, source code, and documentation, visit our <a href="https://github.com/lollix91/MediaSeal" target="_blank">GitHub repository</a>.</p>
+        </div>
 
         <div class="faq-section">
             <h2>Frequently Asked Questions</h2>
@@ -113,7 +132,7 @@
                     <label class="button" for="mediaFileInput">Select a file</label>
                 </div>
                 <div id="mediaFileInfo"></div>
-				<div id="calculatedChecksumDisplay"></div>
+                <div id="calculatedChecksumDisplay"></div>
                 <input type="text" id="mediaPublicKeyInput" placeholder="Enter public key">
                 <button id="verifyMediaButton" class="button"><i class="fas fa-check-circle"></i> Verify Media Checksum</button>
             </div>
@@ -121,6 +140,10 @@
             <div id="verifyResult"></div>
         </div>
     </div>
+
+    <footer>
+        <p>&copy; 2024 MediaSeal. All rights reserved.</p>
+    </footer>
 
     <script src="client.js" type="module"></script>
 </body>

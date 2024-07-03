@@ -22,6 +22,7 @@ MediaSeal utilizes the Solana blockchain to securely store checksums of media fi
 
 - Blockchain-based media checksum storage
 - User-friendly interface for uploading and verifying media
+- No data is stored on our servers
 - Wallet integration for secure transactions
 - Dark mode support
 - Responsive design for various devices
