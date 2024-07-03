@@ -461,19 +461,24 @@ body {
     justify-content: space-between;
     align-items: center;
     margin-bottom: 30px;
+	padding-bottom: 10px;
     position: relative;
+	border-bottom: 3px dotted red;
+
 }
 
 .timeline::before {
     content: '';
+	border:1 px solid red;
     position: absolute;
     top: 50%;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 0px;
     background-color: #ddd;
     z-index: 1;
 }
+
 
 .timeline-step {
     display: flex;
@@ -481,7 +486,6 @@ body {
     align-items: center;
     position: relative;
     z-index: 1;
-    background-color: var(--bg-color);
     padding: 0 10px;
 }
 
