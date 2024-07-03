@@ -53,7 +53,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const mediaTypeSelect = document.getElementById('mediaTypeSelect');
 
     let provider = null;
-    let connection = new Connection("https://api.mainnet-beta.solana.com", 'confirmed');
+    let connection = new Connection("https://dimensional-green-liquid.solana-mainnet.quiknode.pro/ef601964a36e4c141fa0c108c29435367310d337/", 'confirmed');
     let programId = new PublicKey("2Hx22amfnUy897oNaAtMn7xgck3A3pwMpj8PtWcFK75Q");
     let payer = null;
     let newAccount = Keypair.generate();
