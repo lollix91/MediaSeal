@@ -532,10 +532,33 @@ function getProvider() {
     }
 	
 
-	// Add this to your DOMContentLoaded event listener
 	const mobileInstructions = document.querySelector('#mobile-instructions');
 	if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
 		mobileInstructions.style.display = 'block';
-}
+	}
+
+
+    const privacyModal = document.getElementById('privacyModal');
+    const privacyNoticeLink = document.getElementById('privacyNoticeLink');
+    const privacyCloseButton = privacyModal.getElementsByClassName('close')[0];
+
+    privacyNoticeLink.onclick = (e) => {
+        e.preventDefault();
+        privacyModal.style.display = 'block';
+    };
+
+    privacyCloseButton.onclick = () => {
+        privacyModal.style.display = 'none';
+    };
+
+    window.onclick = (event) => {
+        if (event.target == privacyModal) {
+            privacyModal.style.display = 'none';
+        }
+        if (event.target == modal) {
+            modal.style.display = 'none';
+            resetVerifyModal();
+        }
+    };
 
 });

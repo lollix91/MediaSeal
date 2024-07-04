@@ -130,6 +130,20 @@
 				<div class="faq-question"><i class="fas fa-question-circle"></i> Is my media file uploaded to your servers?</div>
 				<div class="faq-answer">No, your media file is never uploaded to our servers. The checksum calculation is performed entirely on your device (client-side). Only the resulting hash (checksum) is sent to be stored on the blockchain. This ensures your media remains private and secure on your own device while still allowing for verification of its integrity.</div>
 			</div>
+			<div class="faq-item">
+				<div class="faq-question"><i class="fas fa-question-circle"></i> How does MediaSeal calculate checksums without uploading my files?</div>
+				<div class="faq-answer">
+					MediaSeal uses advanced web technologies to calculate checksums entirely within your browser:
+					<ul>
+						<li>When you select a file, it's processed using your device's resources, not our servers.</li>
+						<li>We use the File API and FileReader to access the file data locally.</li>
+						<li>The SHA-256 checksum is calculated using JavaScript in your browser.</li>
+						<li>Only this resulting checksum is sent to the blockchain for storage.</li>
+						<li>At no point is your actual media file uploaded or transmitted over the internet.</li>
+					</ul>
+					This approach ensures your media files remain private and secure on your device while still allowing for blockchain-based verification of their integrity.
+				</div>
+			</div>			
 		</div>
 
 
@@ -168,9 +182,65 @@
         </div>
     </div>
 
-    <footer>
-        <p>&copy; 2024 MediaSeal. All rights reserved. - <a href="https://github.com/lollix91/MediaSeal" target="_blank">GitHub</a> - <a href="https://www.reddit.com/r/MediaSeal/" target="_blank">Reddit</a></p>
-    </footer>
+<div id="privacyModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+		<div id="privacyContent">
+			<h2>Privacy Notice</h2>
+
+			<p>Last updated: 04/07/2024</p>
+
+			<h3>1. Introduction</h3>
+			<p>MediaSeal ("we", "our", or "us") respects your privacy and is committed to protecting your personal data. This privacy notice will inform you about how we handle your personal data when you use our service and tell you about your privacy rights and how the law protects you.</p>
+
+			<h3>2. Important Information and Who We Are</h3>
+			<p>MediaSeal is the controller and responsible for your personal data. If you have any questions about this privacy notice, including any requests to exercise your legal rights, please contact us at [Insert Contact Email].</p>
+
+			<h3>3. The Data We Collect About You</h3>
+			<p>We collect and process the following data:</p>
+			<ul>
+				<li>Blockchain wallet address</li>
+				<li>Checksums of media files</li>
+				<li>Transaction data on the Solana blockchain</li>
+			</ul>
+			<p>We do not collect or store your actual media files. All file processing occurs locally on your device.</p>
+
+			<h3>4. How We Use Your Personal Data</h3>
+			<p>We use your data to:</p>
+			<ul>
+				<li>Provide and maintain our service</li>
+				<li>Store checksums on the Solana blockchain</li>
+				<li>Verify the integrity of media files</li>
+			</ul>
+
+			<h3>5. Data Security</h3>
+			<p>We have implemented appropriate security measures to prevent your personal data from being accidentally lost, used, or accessed in an unauthorized way. The checksums of your files are stored on the public Solana blockchain, which is inherently secure and immutable.</p>
+
+			<h3>6. Data Retention</h3>
+			<p>We will only retain blockchain transaction data for as long as necessary to fulfill the purposes we collected it for. Checksums stored on the blockchain will remain there indefinitely due to the nature of blockchain technology.</p>
+
+			<h3>7. Your Legal Rights</h3>
+			<p>Under certain circumstances, you have rights under data protection laws in relation to your personal data, including the right to access, correct, erase, restrict, and object to processing of your personal data. However, please note that due to the nature of blockchain technology, we cannot erase or modify data that has been committed to the blockchain.</p>
+
+			<h3>8. Third-party Links</h3>
+			<p>Our service may include links to third-party websites, plug-ins, and applications. Clicking on those links or enabling those connections may allow third parties to collect or share data about you. We do not control these third-party websites and are not responsible for their privacy statements.</p>
+
+			<h3>9. Changes to the Privacy Notice</h3>
+			<p>We may update our privacy notice from time to time. We will notify you of any changes by posting the new privacy notice on this page.</p>
+
+			<h3>10. Contact Us</h3>
+			<p>If you have any questions about this privacy notice or our data practices, please contact us at [Insert Contact Email].</p>
+		</div>
+    </div>
+</div>
+
+
+	<footer>
+		<p>&copy; 2024 MediaSeal. All rights reserved. - 
+		<a href="https://github.com/lollix91/MediaSeal" target="_blank">GitHub</a> - 
+		<a href="https://www.reddit.com/r/MediaSeal/" target="_blank">Reddit</a> - 
+		<a href="#" id="privacyNoticeLink">Privacy Notice</a></p>
+	</footer>
 
     <script src="client.js" type="module"></script>
 </body>

@@ -608,3 +608,20 @@ footer {
     font-style: italic;
     color: #2c3e50; /* Dark blue-gray color for emphasis */
 }
+
+#privacyModal .modal-content {
+    max-width: 600px;
+}
+
+#privacyContent {
+    margin-top: 20px;
+}
+
+#privacyContent ul {
+    padding-left: 20px;
+    margin-bottom: 15px;
+}
+
+#privacyContent p {
+    margin-bottom: 15px;
+}
