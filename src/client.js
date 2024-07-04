@@ -73,15 +73,24 @@ document.addEventListener("DOMContentLoaded", async () => {
         statusMessage.style.color = isError ? 'red' : 'green';
     }
 
-    function getProvider() {
-        if ("solana" in window) {
-            const provider = window.solana;
-            if (provider.isPhantom) {
-                return provider;
-            }
+function getProvider() {
+    if ("solana" in window) {
+        const provider = window.solana;
+        if (provider.isPhantom) {
+            return provider;
         }
+    }
+
+    // Check if it's a mobile device
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        // For mobile devices, open Phantom wallet in a new tab/window
+        window.open("https://phantom.app/ul/browse/" + window.location.href, "_blank");
+    } else {
+        // For desktop, open Phantom wallet website
         window.open("https://phantom.app/", "_blank");
     }
+    return null;
+}
 
     function showLoader() {
         document.getElementById('loader').style.display = 'block';
@@ -323,26 +332,30 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     // Event Listeners
-    connectWalletButton.onclick = async () => {
-        provider = getProvider();
-        if (!provider) return;
+	connectWalletButton.onclick = async () => {
+		provider = getProvider();
+		if (!provider) return;
 
-        try {
-            showLoader();
-            await provider.connect();
-            payer = provider.publicKey;
-            console.log("Connected with public key:", payer.toString());
+		try {
+			showLoader();
+			if (provider.isPhantom) {
+				await provider.connect();
+				payer = provider.publicKey;
+				console.log("Connected with public key:", payer.toString());
 
-            connectWalletButton.disabled = true;
-            createAccountButton.disabled = false;
-            showStatus("Wallet connected successfully!");
-            updateProgress(1);
-        } catch (err) {
-            console.error("Failed to connect to Phantom wallet", err);
-            showStatus("Failed to connect to Phantom wallet", true);
-        }
-        hideLoader();
-    };
+				connectWalletButton.disabled = true;
+				createAccountButton.disabled = false;
+				showStatus("Wallet connected successfully!");
+				updateProgress(1);
+			} else {
+				showStatus("Please open this page in the Phantom mobile app browser", true);
+			}
+		} catch (err) {
+			console.error("Failed to connect to Phantom wallet", err);
+			showStatus("Failed to connect to Phantom wallet", true);
+		}
+		hideLoader();
+	};
 
     createAccountButton.onclick = createAccount;
     uploadChecksumButton.onclick = uploadChecksum;
@@ -518,5 +531,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         });
     }
 	
+
+	// Add this to your DOMContentLoaded event listener
+	const mobileInstructions = document.querySelector('#mobile-instructions');
+	if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+		mobileInstructions.style.display = 'block';
+}
 
 });
