@@ -19,7 +19,8 @@
     <div class="container">
         <header>
             <img src="../assets/logo.png" alt="MediaSeal Logo" class="logo">
-            <p class="main-description">Welcome to MediaSeal. Our platform uses the Solana blockchain to securely store checksums of your media files, ensuring the authenticity and integrity of your photos and videos. By utilizing blockchain technology, we can help combat deepfake and unauthorized modifications.</p>
+			<p class="main-description">Welcome to MediaSeal. Our platform uses the Solana blockchain to securely store checksums of your media files, ensuring the authenticity and integrity of your photos and videos. By utilizing blockchain technology, we can help combat deepfake and unauthorized modifications.</p>
+			<p class="privacy-notice"><strong>Important Privacy Notice:</strong> All checksums are calculated locally on your device. <em>No media files are ever sent to our servers or stored on the web.</em> Only the resulting checksum is securely stored on the blockchain.</p>
         </header>
 
         <div class="timeline">
@@ -96,25 +97,42 @@
             <p>For more information, source code, and documentation, visit our <a href="https://github.com/lollix91/MediaSeal" target="_blank">GitHub repository</a> or <a href="https://www.reddit.com/r/MediaSeal/" target="_blank">Reddit</a>.</p>
         </div>
 
-        <div class="faq-section">
-            <h2>Frequently Asked Questions</h2>
-            <div class="faq-item">
-                <div class="faq-question"><i class="fas fa-question-circle"></i> Why do we use the Solana blockchain?</div>
-                <div class="faq-answer">The Solana blockchain is known for its high speed and low transaction costs, making it an ideal choice for storing media checksums securely and efficiently. By using the blockchain, we ensure that the checksums are immutable and publicly verifiable, which helps prevent deepfakes and unauthorized modifications.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question"><i class="fas fa-question-circle"></i> Why do we need to connect a wallet?</div>
-                <div class="faq-answer">Connecting a wallet allows us to authenticate your identity and link your media checksums to your account securely. It also enables you to manage your assets and transactions on the blockchain.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question"><i class="fas fa-question-circle"></i> Why do we need to create an account and upload payload?</div>
-                <div class="faq-answer">Creating an account on the blockchain allows us to store your media checksums securely. Uploading the checksum payload ensures that your media files are registered on the blockchain, making it easy to verify their authenticity.</div>
-            </div>
-            <div class="faq-item">
-                <div class="faq-question"><i class="fas fa-question-circle"></i> What is the commission that will be paid?</div>
-                <div class="faq-answer">When you upload a checksum, a small commission is paid to cover the transaction costs on the Solana network. This fee helps maintain the network's security and performance. Another small fee is paid to the developer, in order to cover the development and updates made on the platform.</div>
-            </div>
-        </div>
+
+		<div class="faq-section">
+			<h2>Frequently Asked Questions</h2>
+			<div class="faq-item">
+				<div class="faq-question"><i class="fas fa-question-circle"></i> Why do we use the Solana blockchain?</div>
+				<div class="faq-answer">The Solana blockchain is known for its high speed and low transaction costs, making it an ideal choice for storing media checksums securely and efficiently. By using the blockchain, we ensure that the checksums are immutable and publicly verifiable, which helps prevent deepfakes and unauthorized modifications.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question"><i class="fas fa-question-circle"></i> Why do we need to connect a wallet?</div>
+				<div class="faq-answer">Connecting a wallet allows us to authenticate your identity and link your media checksums to your account securely. It also enables you to manage your assets and transactions on the blockchain.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question"><i class="fas fa-question-circle"></i> Why do we need to create an account and upload payload?</div>
+				<div class="faq-answer">Creating an account on the blockchain allows us to store your media checksums securely. Uploading the checksum payload ensures that your media files are registered on the blockchain, making it easy to verify their authenticity.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question"><i class="fas fa-question-circle"></i> What is the commission that will be paid?</div>
+				<div class="faq-answer">When you upload a checksum, a small commission is paid to cover the transaction costs on the Solana network. This fee helps maintain the network's security and performance. Another small fee is paid to the developer, in order to cover the development and updates made on the platform.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question"><i class="fas fa-question-circle"></i> What hash type is used and how can I calculate it locally?</div>
+				<div class="faq-answer">We use the SHA-256 hash algorithm to calculate checksums. You can calculate this hash locally on your PC using various methods:
+					<ul>
+						<li>On Windows, use PowerShell: <code>Get-FileHash -Algorithm SHA256 -Path "path\to\your\file"</code></li>
+						<li>On macOS or Linux, use the terminal: <code>shasum -a 256 /path/to/your/file</code></li>
+						<li>There are also many online tools and software applications that can calculate SHA-256 hashes for files.</li>
+					</ul>
+					Always ensure you're using a trusted method to calculate your hash.</div>
+			</div>
+			<div class="faq-item">
+				<div class="faq-question"><i class="fas fa-question-circle"></i> Is my media file uploaded to your servers?</div>
+				<div class="faq-answer">No, your media file is never uploaded to our servers. The checksum calculation is performed entirely on your device (client-side). Only the resulting hash (checksum) is sent to be stored on the blockchain. This ensures your media remains private and secure on your own device while still allowing for verification of its integrity.</div>
+			</div>
+		</div>
+
+
     </div>
 
     <div id="verifyModal" class="modal">

@@ -584,3 +584,27 @@ footer {
     color: #666;
     font-size: 0.9em;
 }
+
+.privacy-notice {
+    background-color: #e6f7ff; /* Light blue background */
+    border: 2px solid #1890ff; /* Blue border */
+    border-radius: 5px; /* Rounded corners */
+    padding: 15px; /* Inner spacing */
+    margin-top: 20px; /* Space above the notice */
+    margin-bottom: 20px; /* Space below the notice */
+    font-size: 1.1em; /* Slightly larger text */
+    line-height: 1.5; /* Increased line height for readability */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+.privacy-notice strong {
+    color: #1890ff; /* Blue color for the "Important Privacy Notice" text */
+    display: block; /* Make the strong text a block element */
+    margin-bottom: 10px; /* Space below the heading */
+    font-size: 1.2em; /* Even larger font for the heading */
+}
+
+.privacy-notice em {
+    font-style: italic;
+    color: #2c3e50; /* Dark blue-gray color for emphasis */
+}
