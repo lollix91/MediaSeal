@@ -68,12 +68,29 @@
         <div id="publicKeyDisplay" class="public-key-display"></div>
         <div id="statusMessage" class="status-message"></div>
 
-		<div class="action-buttons">
-			<button id="connectPhantom" class="button button-primary"><img src="../assets/phantom.png" style="width:30px; height:30px;"> Connect Phantom</button>
-			<button id="connectSolflare" class="button button-primary"><img src="../assets/solflare.png" style="width:30px; height:30px;"> Connect Solflare</button>
-			<button id="createAccount" class="button button-secondary" disabled><i class="fas fa-user-plus"></i> Create Account</button>
-			<button id="uploadChecksum" class="button button-secondary" disabled><i class="fas fa-upload"></i> Upload Checksum</button>
-		</div>	
+<div class="steps-container">
+    <div class="step">
+        <h3>Step 1: Connect Wallet</h3>
+        <div class="action-buttons">
+            <button id="connectPhantom" class="button button-primary"><img src="../assets/phantom.png" style="width:30px; height:30px;"> Connect Phantom</button>
+            <button id="connectSolflare" class="button button-primary"><img src="../assets/solflare.png" style="width:30px; height:30px;"> Connect Solflare</button>
+        </div>
+    </div>
+    
+    <div class="step">
+        <h3>Step 2: Create Account</h3>
+        <div class="action-buttons">
+            <button id="createAccount" class="button button-secondary" disabled><i class="fas fa-user-plus"></i> Create Account</button>
+        </div>
+    </div>
+    
+    <div class="step">
+        <h3>Step 3: Upload Checksum</h3>
+        <div class="action-buttons">
+            <button id="uploadChecksum" class="button button-secondary" disabled><i class="fas fa-upload"></i> Upload Checksum</button>
+        </div>
+    </div>
+</div>
 		
 		
         <div class="loader" id="loader"></div>
