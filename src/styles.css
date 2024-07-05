@@ -625,3 +625,23 @@ footer {
 #privacyContent p {
     margin-bottom: 15px;
 }
+
+#connectPhantom {
+	background-color: #ab9ff2;
+    color: white;
+	transition: background-color 0.3s, opacity 0.3s;
+}
+
+#connectPhantom:hover:not(:disabled) {
+    background-color: #9b8fe2;
+}
+
+#connectSolflare {
+	background-color: #232323;
+    color: white;
+	transition: background-color 0.3s, opacity 0.3s;
+}
+
+#connectSolflare:hover:not(:disabled) {
+    background-color: #131313;
+}
