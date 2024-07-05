@@ -24,7 +24,8 @@ class Media {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const connectWalletButton = document.getElementById("connectWallet");
+    const connectPhantomButton = document.getElementById("connectPhantom");
+    const connectSolflareButton = document.getElementById("connectSolflare");
     const createAccountButton = document.getElementById("createAccount");
     const uploadChecksumButton = document.getElementById("uploadChecksum");
     const publicVerifyChecksumButton = document.getElementById("publicVerifyChecksum");
@@ -59,38 +60,60 @@ document.addEventListener("DOMContentLoaded", async () => {
     let newAccount = Keypair.generate();
     let selectedFile = null;
 
-    // FAQ functionality
-    const faqQuestions = document.querySelectorAll('.faq-question');
-    faqQuestions.forEach(question => {
-        question.addEventListener('click', () => {
-            const answer = question.nextElementSibling;
-            answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
-        });
-    });
+    function getPhantomProvider() {
+        if ("solana" in window && window.solana.isPhantom) {
+            return window.solana;
+        }
+        return null;
+    }
+
+    function getSolflareProvider() {
+        if (window.solflare && window.solflare.isSolflare) {
+            return window.solflare;
+        }
+        return null;
+    }
+
+    async function connectWallet(walletType) {
+        let walletProvider;
+        if (walletType === 'phantom') {
+            walletProvider = getPhantomProvider();
+        } else if (walletType === 'solflare') {
+            walletProvider = getSolflareProvider();
+        }
+
+        if (!walletProvider) {
+            if (walletType === 'phantom') {
+                window.open("https://phantom.app/", "_blank");
+            } else if (walletType === 'solflare') {
+                window.open("https://solflare.com/", "_blank");
+            }
+            return;
+        }
+
+        try {
+            showLoader();
+            await walletProvider.connect();
+            provider = walletProvider;
+            payer = provider.publicKey;
+            console.log("Connected with public key:", payer.toString());
+
+            connectPhantomButton.disabled = true;
+            connectSolflareButton.disabled = true;
+            createAccountButton.disabled = false;
+            showStatus("Wallet connected successfully!");
+            updateProgress(1);
+        } catch (err) {
+            console.error(`Failed to connect to ${walletType} wallet`, err);
+            showStatus(`Failed to connect to ${walletType} wallet`, true);
+        }
+        hideLoader();
+    }
 
     function showStatus(message, isError = false) {
         statusMessage.textContent = message;
         statusMessage.style.color = isError ? 'red' : 'green';
     }
-
-function getProvider() {
-    if ("solana" in window) {
-        const provider = window.solana;
-        if (provider.isPhantom) {
-            return provider;
-        }
-    }
-
-    // Check if it's a mobile device
-    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-        // For mobile devices, open Phantom wallet in a new tab/window
-        window.open("https://phantom.app/ul/browse/" + window.location.href, "_blank");
-    } else {
-        // For desktop, open Phantom wallet website
-        window.open("https://phantom.app/", "_blank");
-    }
-    return null;
-}
 
     function showLoader() {
         document.getElementById('loader').style.display = 'block';
@@ -99,8 +122,6 @@ function getProvider() {
     function hideLoader() {
         document.getElementById('loader').style.display = 'none';
     }
-
-
 
     function formatChecksum(checksum) {
         return checksum;
@@ -331,32 +352,8 @@ function getProvider() {
         }
     }
 
-    // Event Listeners
-	connectWalletButton.onclick = async () => {
-		provider = getProvider();
-		if (!provider) return;
-
-		try {
-			showLoader();
-			if (provider.isPhantom) {
-				await provider.connect();
-				payer = provider.publicKey;
-				console.log("Connected with public key:", payer.toString());
-
-				connectWalletButton.disabled = true;
-				createAccountButton.disabled = false;
-				showStatus("Wallet connected successfully!");
-				updateProgress(1);
-			} else {
-				showStatus("Please open this page in the Phantom mobile app browser", true);
-			}
-		} catch (err) {
-			console.error("Failed to connect to Phantom wallet", err);
-			showStatus("Failed to connect to Phantom wallet", true);
-		}
-		hideLoader();
-	};
-
+    connectPhantomButton.onclick = () => connectWallet('phantom');
+    connectSolflareButton.onclick = () => connectWallet('solflare');
     createAccountButton.onclick = createAccount;
     uploadChecksumButton.onclick = uploadChecksum;
 
@@ -384,7 +381,7 @@ function getProvider() {
         const publicKey = publicKeyInput.value;
         const mediaType = parseInt(mediaTypeSelect.value);
         if (!checksum || !publicKey) {
-            showVerifyResult("Please enter both checksum and public key", true);
+			showVerifyResult("Please enter both checksum and public key", true);
             return;
         }
         await publicVerifyChecksum(publicKey, checksum, mediaType);
@@ -398,7 +395,7 @@ function getProvider() {
             return;
         }
         const checksum = await calculateChecksum(file);
-		await publicVerifyChecksum(publicKey, checksum, getMediaType(file));
+        await publicVerifyChecksum(publicKey, checksum, getMediaType(file));
     };
 
     window.onclick = (event) => {
@@ -469,21 +466,21 @@ function getProvider() {
     async function handleMediaFileSelect(file) {
         if (file) {
             mediaFileInfo.textContent = `Selected file: ${file.name}`;
-			verifyMediaButton.disabled = true; // Disable the verify button while calculating
-			calculatedChecksumDisplay.textContent = 'Calculating checksum...';
-			
-			try {
-				const checksum = await calculateChecksum(file);
-				calculatedChecksumDisplay.innerHTML = `
-					<strong>Calculated Checksum:</strong><br>
-					<span style="word-break: break-all;">${checksum}</span>
-				`;
-				verifyMediaButton.disabled = false; // Re-enable the verify button
-			} catch (error) {
-				console.error('Error calculating checksum:', error);
-				calculatedChecksumDisplay.textContent = 'Error calculating checksum';
-				verifyMediaButton.disabled = true;
-			}
+            verifyMediaButton.disabled = true;
+            calculatedChecksumDisplay.textContent = 'Calculating checksum...';
+            
+            try {
+                const checksum = await calculateChecksum(file);
+                calculatedChecksumDisplay.innerHTML = `
+                    <strong>Calculated Checksum:</strong><br>
+                    <span style="word-break: break-all;">${checksum}</span>
+                `;
+                verifyMediaButton.disabled = false;
+            } catch (error) {
+                console.error('Error calculating checksum:', error);
+                calculatedChecksumDisplay.textContent = 'Error calculating checksum';
+                verifyMediaButton.disabled = true;
+            }
         }
     }
 
@@ -519,8 +516,8 @@ function getProvider() {
         verifyChecksumButton.disabled = false;
         verifyMediaButton.disabled = false;
     }
-	
-	function updateProgress(step) {
+    
+    function updateProgress(step) {
         const steps = document.querySelectorAll('.timeline-step');
         steps.forEach((s, index) => {
             if (index < step) {
@@ -530,13 +527,11 @@ function getProvider() {
             }
         });
     }
-	
 
-	const mobileInstructions = document.querySelector('#mobile-instructions');
-	if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-		mobileInstructions.style.display = 'block';
-	}
-
+    const mobileInstructions = document.querySelector('#mobile-instructions');
+    if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+        mobileInstructions.style.display = 'block';
+    }
 
     const privacyModal = document.getElementById('privacyModal');
     const privacyNoticeLink = document.getElementById('privacyNoticeLink');
@@ -560,5 +555,4 @@ function getProvider() {
             resetVerifyModal();
         }
     };
-
 });
