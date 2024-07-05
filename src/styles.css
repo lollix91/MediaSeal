@@ -87,8 +87,8 @@ h1 {
 }
 
 .file-input-area, .public-key-display, .status-message {
-    margin-top: 12px;
-	margin-bottom: 12px;
+    margin-top: 0px;
+	margin-bottom: 0px;
     padding: 20px;
     background-color: #f9f9f9;
     border-radius: 5px;

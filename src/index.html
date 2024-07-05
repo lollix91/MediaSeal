@@ -53,20 +53,8 @@
     </ol>
 </div>
 
-        <div id="fileInputArea" class="file-input-area" style="display: none;">
-            <h3>Upload a file to calculate its checksum</h3>
-            <div id="drop-area">
-                <form class="my-form">
-                    <p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region. Your uploaded file will never be stored on our side.</p>
-                    <input type="file" id="fileElem" accept="image/*,video/*">
-                    <label class="button" for="fileElem">Select a file</label>
-                </form>
-            </div>
-            <div id="fileInfo"></div>
-        </div>
 
-        <div id="publicKeyDisplay" class="public-key-display"></div>
-        <div id="statusMessage" class="status-message"></div>
+
 
 <div class="steps-container">
     <div class="step">
@@ -76,6 +64,8 @@
             <button id="connectSolflare" class="button button-primary"><img src="../assets/solflare.png" style="width:30px; height:30px;"> Connect Solflare</button>
         </div>
     </div>
+	
+	<div id="statusMessage" class="status-message"></div>
     
     <div class="step">
         <h3>Step 2: Create Account</h3>
@@ -83,6 +73,19 @@
             <button id="createAccount" class="button button-secondary" disabled><i class="fas fa-user-plus"></i> Create Account</button>
         </div>
     </div>
+	
+	<div id="publicKeyDisplay" class="public-key-display"></div>
+	<div id="fileInputArea" class="file-input-area" style="display: none;">
+		<h3>Upload a file to calculate its checksum</h3>
+		<div id="drop-area">
+			<form class="my-form">
+				<p>Upload a file with the file dialog or by dragging and dropping it onto the dashed region. Your uploaded file will never be stored on our side.</p>
+				<input type="file" id="fileElem" accept="image/*,video/*">
+				<label class="button" for="fileElem">Select a file</label>
+			</form>
+		</div>
+		<div id="fileInfo"></div>
+	</div>
     
     <div class="step">
         <h3>Step 3: Upload Checksum</h3>
@@ -90,7 +93,10 @@
             <button id="uploadChecksum" class="button button-secondary" disabled><i class="fas fa-upload"></i> Upload Checksum</button>
         </div>
     </div>
+	
+	<div id="statusMessageChecksum" class="status-message"></div>
 </div>
+		
 		
 		
         <div class="loader" id="loader"></div>

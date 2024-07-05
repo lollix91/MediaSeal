@@ -31,6 +31,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     const publicVerifyChecksumButton = document.getElementById("publicVerifyChecksum");
     const publicKeyDisplay = document.getElementById("publicKeyDisplay");
     const statusMessage = document.getElementById("statusMessage");
+    const statusMessageChecksum = document.getElementById("statusMessageChecksum");	
     const darkModeToggle = document.getElementById('darkModeToggle');
     const modal = document.getElementById('verifyModal');
     const closeButton = document.getElementsByClassName('close')[0];
@@ -158,6 +159,11 @@ document.addEventListener("DOMContentLoaded", async () => {
         statusMessage.textContent = message;
         statusMessage.style.color = isError ? 'red' : 'green';
     }
+	
+	function showStatusChecksum(message, isError = false) {
+        statusMessageChecksum.textContent = message;
+        statusMessageChecksum.style.color = isError ? 'red' : 'green';
+    }
 
     function showLoader() {
         document.getElementById('loader').style.display = 'block';
@@ -217,20 +223,19 @@ document.addEventListener("DOMContentLoaded", async () => {
             publicKeyDisplay.innerHTML = `New account created. <b>Copy THIS KEY and the ORIGINAL media file in a safe place</b>, you will need it to check media checksums in the future. Public key:<br><p style="color:red;">${newAccount.publicKey.toBase58()}</p>`;
 
             uploadChecksumButton.disabled = true;
-            showStatus("Account created successfully! Please select a file to upload its checksum.");
             fileInputArea.style.display = 'block';
             updateProgress(2);
         } catch (err) {
             console.error("Failed to create account", err);
-            showStatus("Failed to create account", true);
-            createAccountButton.disabled = false;
+			publicKeyDisplay.innerHTML = `<p style="color:red;">Failed to create account</p>`            
+			createAccountButton.disabled = false;
         }
         hideLoader();
     }
 
     async function uploadChecksum() {
         if (!selectedFile) {
-            showStatus('Please select a file first', true);
+            showStatusChecksum('Please select a file first', true);
             return;
         }
 
@@ -271,11 +276,11 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             await connection.confirmTransaction(signature);
             console.log("Checksum uploaded successfully");
-            showStatus("Checksum uploaded successfully! Now you can store the public key and the original media file in a safe place. You can securely close this window or upload another media checksum file.");
+            showStatusChecksum("Checksum uploaded successfully! Now you can store the public key and the original media file in a safe place. You can securely close this window or upload another media checksum file.");
             updateProgress(3);
         } catch (err) {
             console.error("Failed to upload checksum", err);
-            showStatus("Failed to upload checksum", true);
+            showStatusChecksum("Failed to upload checksum", true);
         }
         uploadChecksumButton.disabled = false;
         hideLoader();
