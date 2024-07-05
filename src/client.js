@@ -60,19 +60,63 @@ document.addEventListener("DOMContentLoaded", async () => {
     let newAccount = Keypair.generate();
     let selectedFile = null;
 
+    // FAQ functionality
+    const faqQuestions = document.querySelectorAll('.faq-question');
+    faqQuestions.forEach(question => {
+        question.addEventListener('click', () => {
+            const answer = question.nextElementSibling;
+            answer.style.display = answer.style.display === 'block' ? 'none' : 'block';
+        });
+    });
+
     function getPhantomProvider() {
-        if ("solana" in window && window.solana.isPhantom) {
-            return window.solana;
-        }
-        return null;
+		if ("solana" in window) {
+			const provider = window.solana;
+			if (provider.isPhantom) {
+				return provider;
+			}
+		}
+
+		// Check if it's a mobile device
+		if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+			// For mobile devices, open Phantom wallet in a new tab/window
+			window.open("https://phantom.app/ul/browse/" + window.location.href, "_blank");
+		} else {
+			// For desktop, open Phantom wallet website
+			window.open("https://phantom.app/", "_blank");
+		}
+		return null;
     }
 
-    function getSolflareProvider() {
-        if (window.solflare && window.solflare.isSolflare) {
-            return window.solflare;
-        }
-        return null;
-    }
+	function getSolflareProvider() {
+		if ("solflare" in window) {
+			const provider = window.solflare;
+			if (provider.isSolflare) {
+				return provider;
+			}
+		}
+		
+		// Check if it's a mobile device
+		if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+			// For mobile devices, open Solflare wallet in-app browser
+			const currentUrl = encodeURIComponent(window.location.href);
+			const params = new URLSearchParams({
+				ref: window.location.origin
+			});
+			const solflareDeeplink = `https://solflare.com/ul/v1/browse/${currentUrl}?${params.toString()}`;
+			
+			// Use window.location.href instead of window.open
+			window.location.href = solflareDeeplink;
+			
+			// Prevent further execution
+			return null;
+		} else {
+			// For desktop, open Solflare wallet website
+			window.open("https://solflare.com/", "_blank");
+		}
+		
+		return null;
+	}
 
     async function connectWallet(walletType) {
         let walletProvider;
